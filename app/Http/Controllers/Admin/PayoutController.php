@@ -30,7 +30,6 @@ class PayoutController extends Controller
                             'loginHistory.retailer:id,name,mobile_number',
                             'loginHistory.qRCodeItem:id,serial_number,reward_item_id',
                             'loginHistory.qRCodeItem.rewardItem:id,value',
-                            // 'loginHistory.qRCodeItem.wd:id,code'
                         ])
                         ->select('id','login_history_id','utr','status','reason','processed_at')
                         ->get();

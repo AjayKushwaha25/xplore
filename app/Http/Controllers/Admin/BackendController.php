@@ -141,11 +141,11 @@ class BackendController extends Controller
         $zip->close();
         return true;
     }
-    private function createFolder($folder, $wdCode){
+    private function createFolder($folder){
         $srNo = 1;
         $publicPath = '';
         if(File::exists(public_path($folder))){
-            while(File::exists(public_path('images/qr-code-final/'.Carbon::now()->format('d-m-Y').'-'.$srNo.'/'.$wdCode))){
+            while(File::exists(public_path('images/qr-code-final/'.Carbon::now()->format('d-m-Y').'-'.$srNo))){
                 $srNo++;
             }
         }else{
@@ -154,7 +154,7 @@ class BackendController extends Controller
         if($srNo==""){
             $publicPath = $folder;
         }else{
-            $publicPath = 'images/qr-code-final/'.Carbon::now()->format('d-m-Y').'-'.$srNo.'/'.$wdCode;
+            $publicPath = 'images/qr-code-final/'.Carbon::now()->format('d-m-Y').'-'.$srNo;
             // $createFolder = File::makeDirectory(public_path('images/qr-code-final/'.Carbon::now()->format('d-m-Y').'-'.$srNo.'/'.$wdCode),0777,true);
         }
         $createFolder = File::makeDirectory(public_path($publicPath),0777,true);

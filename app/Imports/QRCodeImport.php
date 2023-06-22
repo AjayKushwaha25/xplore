@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use Throwable;
-use App\Models\{WD, QRCodeItem, RewardItem, User};
+use App\Models\{QRCodeItem, RewardItem, User};
 use Illuminate\Support\{Str, Collection};
 use Carbon\Carbon;
 use App\Notifications\ImportHasFailedNotification;
@@ -54,13 +54,8 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         foreach ($rows as $key => $row)
         {
             try {
-                $rewardId = RewardItem::whereValue($row[4])->value('id');
-                $wd = WD::updateOrCreate([
-                    'code' => $row[0],
-                ],[
-                    'firm_name' => $row[1],
-                    'section_code' => $row[2],
-                ]);
+                $rewardValue = $row[1];
+                $rewardId = RewardItem::whereValue($row[1])->value('id');
 
                 $uniqueKey = Str::random(5);
 
@@ -69,25 +64,27 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 }
 
                 $qrCodeItem = QRCodeItem::updateOrCreate([
-                    'serial_number' => $row[3],
+                    'serial_number' => $row[0],
                 ],[
                     'key' => $uniqueKey,
-                    'wd_id' => $wd->id,
                     'reward_item_id' => $rewardId,
                 ]);
+
+                $noofPack = $this->noofPackByRewardValue($rewardValue);
+
                 // final coupon path
-                $qrCodeRewardAmt = "{$newQRFolder}/{$row[4]}";
+                $qrCodeRewardAmt = "{$newQRFolder}/{$row[1]}";
                 if(!Storage::disk('public')->exists($qrCodeRewardAmt)) {
                     Storage::disk('public')->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
                 }
-                $imagePath = "{$qrCodeRewardAmt}/{$row[3]}.png";
+                $imagePath = "{$qrCodeRewardAmt}/{$row[0]}.png";
                 if(!Storage::disk('public')->exists($imagePath)){
                     $url = url('/')."/login/?uid={$qrCodeItem->id}";
                     $couponUniqueURL = url('/')."?k={$qrCodeItem->key}";
 
-                    $qr_code_file = "qr-code/{$row[3]}.png";
+                    $qr_code_file = "qr-code/{$row[0]}.png";
                     $image = QrCode::format('png')
-                            ->size(520)->errorCorrection('H')
+                            ->size(550)->errorCorrection('H')
                             ->generate($url);
 
                     $storeQrCode = Storage::disk('public')->put($qr_code_file, $image);
@@ -98,7 +95,23 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
                     $back = Image::make(public_path('images/coupon_template/back.png'));
 
-                    $back->text($row[3], 145, 713, function($font) {
+                    $back->text($noofPack, 370, 170, function($font) {
+                        $font->file(public_path('fonts/Lato-Bold.ttf'));
+                        $font->size(100);
+                        $font->color('#000');
+                        $font->align('center');
+                        $font->valign('bottom');
+                    });
+
+                    $back->text($rewardValue, 1600, 640, function($font) {
+                        $font->file(public_path('fonts/Lato-Bold.ttf'));
+                        $font->size(150);
+                        $font->color('#000');
+                        $font->align('right');
+                        $font->valign('bottom');
+                    });
+
+                    $back->text($row[0], 145, 713, function($font) {
                         $font->file(public_path('fonts/Lato-Bold.ttf'));
                         $font->size(26);
                         $font->color('#000');
@@ -106,7 +119,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                         $font->valign('bottom');
                     });
                     $qrCode = Image::make(storage_path("app/public/{$qr_code_file}"));
-                    $back->insert($qrCode, 'top-right', 143, 101);
+                    $back->insert($qrCode, 'top-left', 128, 100);
 
                     $finalQRCode = storage_path("app/public/{$imagePath}");
                     $imgSave = $back->save($finalQRCode);
@@ -137,20 +150,14 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
     {
         return [
             '*.0' => ['required'],
-            '*.1' => ['required'],
-            '*.2' => ['sometimes'],
-            '*.3' => ['required'],
-            '*.4' => ['required','numeric'],
+            '*.1' => ['required','numeric'],
         ];
     }
     public function customValidationAttributes()
     {
         return [
-            '0' => 'WD Code',
-            '1' => 'WD Firm Name',
-            '2' => 'Section Code',
-            '3' => 'Serial Number',
-            '4' => 'Amount',
+            '0' => 'Serial Number',
+            '1' => 'Amount',
         ];
     }
 
@@ -190,5 +197,22 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
     public function chunkSize(): int
     {
         return 200;
+    }
+
+    public function noofPackByRewardValue($rewardValue){
+        switch ($rewardValue) {
+            case '50':
+                return 1;
+                break;
+            case '100':
+                return 2;
+                break;
+            case '200':
+                return 5;
+                break;
+            default:
+                return 0;
+                break;
+        }
     }
 }

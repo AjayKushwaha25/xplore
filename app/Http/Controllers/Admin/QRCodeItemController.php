@@ -35,7 +35,7 @@ class QRCodeItemController extends Controller
                                         $query->select('id','value');
                                     });
                                 })
-                                ->with(['rewardItem:id,value','wd:id,code']);
+                                ->with(['rewardItem:id,value']);
 
         return Datatables::of($qrCodeItems)->make(true);
     }
