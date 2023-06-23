@@ -22,6 +22,12 @@ Route::get('serial_number', function() {
     return view('serial_number');
 })->name('serial_number');
 
+// Route::get('/ds_index', function() {
+//     return view('ds_index');
+// })->name('ds_index');
+
+Route::get('/lp_registration', [PagesController::class, 'lp_registration'])->name('lp_registration');
+
 Route::post('update_key', [QRCodeItemController::class, 'updateKey'])->name('update.key');
 /* Delete after all qr working */
 // ------------------------------------------------------------------------------------------------------- //

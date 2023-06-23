@@ -38,6 +38,10 @@ class PagesController extends Controller
         return view('check_balance.login');
     }
 
+    public function lp_registration(){
+        return view('lp_registration');
+    }
+
     public function history(CalculatePendingPayoutAction $calculatePendingPayoutAction){
         $retailerId = \Auth::guard('retailer')->id();
 
