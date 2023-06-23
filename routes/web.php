@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{PagesController, LoginController,RegisterController};
+use App\Http\Controllers\{PagesController, LoginController,RegisterController, CouponCodeController};
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\{UserController, BackendController, AdminController, QRCodeItemController, RetailerController, LoginHistoryController, PayoutController};
 
@@ -27,6 +27,7 @@ Route::get('serial_number', function() {
 // })->name('ds_index');
 
 Route::get('/lp_registration', [PagesController::class, 'lp_registration'])->name('lp_registration');
+Route::post('coupon', [CouponCodeController::class, 'coupon'])->name('coupon');
 
 Route::post('update_key', [QRCodeItemController::class, 'updateKey'])->name('update.key');
 /* Delete after all qr working */
@@ -62,8 +63,6 @@ Route::group(['prefix' => 'check_balance', 'as' => 'check_balance.'], function()
 Route::group(['middleware' => ['auth:retailer']], function() {
     Route::get('/reward', [PagesController::class, 'reward'])->name('reward');
 });
-
-
 
 /* Admin Routes */
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {

@@ -17,7 +17,7 @@
             <h1 class="head-title text-center">HELLO!</h1>
             <p class="text-center">Register</p>
         </div>
-        <form class="form-sec" action="{{ route('check.register') }}" method="POST">
+        <form class="form-sec" action="{{ route('coupon') }}" method="POST">
             @csrf
             <div class="mb-2">
                 <input type="text" class="form-input @error('name') is-invalid @enderror" value="{{ old('name') }}" id="name" placeholder="Enter Name" name="name" required>
