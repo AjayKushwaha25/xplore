@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\{RetailerRequest, StoreRetailerRequest};
-use App\Models\{Retailer, RewardItem, QRCodeItem, LoginHistory, Payout};
+use App\Models\{CouponCode, Retailer, RewardItem, QRCodeItem, LoginHistory, Payout};
 
 class CouponCodeController extends Controller
 {
@@ -17,5 +17,17 @@ class CouponCodeController extends Controller
                 'message' => 'Something went wrong, please try again later',
             ]);
         }
+
+        $code = new CouponCode;
+
+        $code->code = $this->getGenerateNumber();
+        $code->save();
+    }
+
+    public function getGenerateNumber(){
+
+        $randomNumber = random_int(1, 5500);
+        // dd($randomNumber);
+        return $randomNumber;
     }
 }
