@@ -27,7 +27,7 @@ Route::get('serial_number', function() {
 // })->name('ds_index');
 
 Route::get('/lp_registration', [PagesController::class, 'lp_registration'])->name('lp_registration');
-Route::post('coupon', [CouponCodeController::class, 'coupon'])->name('coupon');
+Route::post('/coupon', [CouponCodeController::class, 'coupon'])->name('coupon');
 
 Route::post('update_key', [QRCodeItemController::class, 'updateKey'])->name('update.key');
 /* Delete after all qr working */
