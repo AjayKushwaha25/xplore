@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\{RetailerRequest, StoreRetailerRequest};
-use App\Models\{CouponCode, Retailer, RewardItem, QRCodeItem, LoginHistory, Payout};
+use App\Models\{CouponCode, Retailer, RewardItem, CouponCodeHistory};
 
 class CouponCodeController extends Controller
 {
     public function coupon(StoreRetailerRequest $request){
-    
+
         $retailer = Retailer::create($request->validated());
+
         if(!$retailer){
             return back()->with([
                 'status' => 'failed',
@@ -18,10 +19,19 @@ class CouponCodeController extends Controller
             ]);
         }
 
-        $code = new CouponCode;
+        $couponCode = CouponCode::create([
+        	'code' => $this->getGenerateNumber(),
+        	'reward_item_id' => RewardItem::inRandomOrder()->value('id')
+        ]);
 
-        $code->code = $this->getGenerateNumber();
-        $code->save();
+        CouponCodeHistory::create([
+        	'retailer_id' => $retailer->id,
+        	'coupon_code_id' => $couponCode->id,
+        ]);
+
+        // return redirect()->route('thank_you');
+        return view('thank-you');
+
     }
 
     public function getGenerateNumber(){

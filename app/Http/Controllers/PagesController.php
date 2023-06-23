@@ -38,8 +38,12 @@ class PagesController extends Controller
         return view('check_balance.login');
     }
 
-    public function lp_registration(){
+    public function couponIndex(){
         return view('lp_registration');
+    }
+
+    public function thankYou(){
+        return view('thank-you');
     }
 
     public function history(CalculatePendingPayoutAction $calculatePendingPayoutAction){

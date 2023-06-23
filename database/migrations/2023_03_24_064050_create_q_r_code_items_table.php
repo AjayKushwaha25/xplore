@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('q_r_code_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('key')->unique();
             $table->string('url')->nullable();
             $table->string('path')->nullable();
             $table->string('serial_number')->unique();
