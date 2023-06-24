@@ -1,6 +1,6 @@
 @extends('main')
 
-@section('title', 'Reward')
+@section('title', 'Thank You')
 
 @section('style')
 <link
@@ -15,21 +15,24 @@
         background-image: url();
     }
     .content .head-title{
-        margin-top: 30%;
+/*        margin-top: 30%;*/
+    }
+    h3{
+        text-align: center;
     }
 </style>
 @endsection
 
 @section('content')
-<div class="bg rewardbg">
+<div class="bg couponCodebg">
     <div class="content">
         @if(\Session::get('status')=='success')
-        <h1 class="head-title animate__animated animate__bounceIn">YOU WON</h1>
+        <h1 class="head-title animate__animated animate__bounceIn">THANK YOU !</h1>
         
-        <p class="cash-text animate__animated animate__bounceInUp">Thank you ! Cashback will be created withtin 24 Hours.</p>
+        <h3 class="head-title animate__animated animate__bounceInUp">{{ \Session::get('message') }}</h3>
         @else
         <script type="text/javascript">
-            window.location.href = "{{ route('logout') }}";
+            window.location.href = "{{ route('coupon.index') }}";
         </script>
         @endif
     </div>

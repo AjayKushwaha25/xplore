@@ -13,7 +13,7 @@
 @endsection
 
 @section('content')
-<div class="bg loginbg">
+<div class="bg couponCodebg">
     <div class="content">
         <a href="{{ route('check_balance.login') }}" class="check-balance">
             <i class="fas fa-landmark" aria-hidden="true"></i>

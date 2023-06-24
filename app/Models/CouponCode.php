@@ -15,7 +15,13 @@ class CouponCode extends Model
         'reward_item_id',
     ];
 
-    public function rewardItem() {
+    public function retailers()
+    {
+        return $this->belongsToMany(Retailer::class, 'coupon_code_histories', 'coupon_code_id', 'retailer_id');
+    }
+
+    public function rewardItem()
+    {
         return $this->belongsTo(RewardItem::class);
     }
 }

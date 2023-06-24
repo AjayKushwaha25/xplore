@@ -3,41 +3,53 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\{RetailerRequest, StoreRetailerRequest};
-use App\Models\{CouponCode, Retailer, RewardItem, CouponCodeHistory};
+use App\Http\Requests\{StoreCCRetailerRequest};
+use App\Models\{CouponCode, Retailer, RewardItem};
 
 class CouponCodeController extends Controller
 {
-    public function coupon(StoreRetailerRequest $request){
+    public function index(){
+        return view('lp_registration');
+    }
 
-        $retailer = Retailer::create($request->validated());
-
+    public function store(StoreCCRetailerRequest $request)
+    {
+        // $retailer = Retailer::firstOrCreate($request->validated());
+        $data = [
+            'mobile_number' => $request->validated('mobile_number'),
+            'upi_id' => $request->validated('upi_id'),
+        ];
+        $retailer = Retailer::where($data)->first();
         if(!$retailer){
-            return back()->with([
-                'status' => 'failed',
-                'message' => 'Something went wrong, please try again later',
-            ]);
+            $retailer = Retailer::create($request->validated());
+
+            if(!$retailer){
+                return back()->with([
+                    'status' => 'failed',
+                    'message' => 'Something went wrong, please try again later',
+                ]);
+            }
         }
 
         $couponCode = CouponCode::create([
-        	'code' => $this->getGenerateNumber(),
-        	'reward_item_id' => RewardItem::inRandomOrder()->value('id')
+            'code' => $this->getGenerateNumber(),
+            'reward_item_id' => RewardItem::inRandomOrder()->value('id')
         ]);
 
-        CouponCodeHistory::create([
-        	'retailer_id' => $retailer->id,
-        	'coupon_code_id' => $couponCode->id,
+        $retailer->couponCodes()->attach($couponCode->id);
+
+        return redirect()->route('thank_you')->with([
+            'status' => 'success',
+            'message' => 'Cashback will be credited withtin 24 Hours.'
         ]);
-
-        // return redirect()->route('thank_you');
-        return view('thank-you');
-
     }
 
     public function getGenerateNumber(){
-
         $randomNumber = random_int(1, 5500);
-        // dd($randomNumber);
         return $randomNumber;
+    }
+
+    public function thankYou(){
+        return view('thank-you');
     }
 }
