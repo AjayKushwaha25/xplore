@@ -32,7 +32,7 @@
         <h3 class="head-title animate__animated animate__bounceInUp">{{ \Session::get('message') }}</h3>
         @else
         <script type="text/javascript">
-            window.location.href = "{{ route('coupon.index') }}";
+            window.location.href = "{{ route('lp_retailer.create') }}";
         </script>
         @endif
     </div>
