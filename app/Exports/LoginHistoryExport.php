@@ -21,7 +21,6 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
             'Mobile number',
             'Whatsapp number',
             'UPI ID',
-            'WD Code',
             'Serial Number',
             'Reward Value',
             'IP Address',
@@ -36,7 +35,7 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
             $loginHistory->retailer->mobile_number,
             $loginHistory->retailer->whatsapp_number,
             $loginHistory->retailer->upi_id,
-            $loginHistory->qRCodeItem->wd->code,
+            // $loginHistory->qRCodeItem->wd->code,
             $loginHistory->qRCodeItem->serial_number,
             $loginHistory->qRCodeItem->rewardItem->value,
             $loginHistory->ip_address,
@@ -56,7 +55,7 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
                 $event->sheet->getDelegate()->getColumnDimension('F')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('G')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('H')->setAutoSize(true);
-                $event->sheet->getDelegate()->getColumnDimension('I')->setAutoSize(true);
+                // $event->sheet->getDelegate()->getColumnDimension('I')->setAutoSize(true);
 
             },
         ];
@@ -64,7 +63,7 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
     }
 
     /**
@@ -75,9 +74,9 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
         return  LoginHistory::query()
                             ->with([
                                 'retailer:id,name,mobile_number,whatsapp_number,upi_id',
-                                'qRCodeItem:id,serial_number,reward_item_id,wd_id',
-                                'qRCodeItem.rewardItem:id,value',
-                                'qRCodeItem.wd:id,code'
+                                'qRCodeItem:id,serial_number,reward_item_id',
+                                'qRCodeItem.rewardItem:id,value'
+                                // 'qRCodeItem.wd:id,code'
                             ])
                             ->select('id','ip_address','retailer_id','q_r_code_item_id','created_at')
                             ->get();

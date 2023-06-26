@@ -17,7 +17,7 @@
 
 .head-title {
     font-family: myFirstFont;
-    color: #f2f2f2;
+    color: #ffff;
     margin-bottom: 0;
 }
 html{
@@ -69,7 +69,7 @@ p {
 }
 
 .cash-text {
-    color: #f2f2f2;
+    color: #2C3689;
 }
 
 .signup-btn {
@@ -194,7 +194,7 @@ p {
     background-image:  url("../images/confetti.gif"), url("../images/Banner_AdobeExpress.gif");
 }
 .rewardbg {
-    background-image: url("../images/confetti.gif");
+    background-image:  url("../images/confetti.gif"), url("../images/Banner_video.gif");
 }
 
 .error{

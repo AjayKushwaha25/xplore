@@ -57,20 +57,20 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 $rewardValue = $row[1];
                 $rewardId = RewardItem::whereValue($row[1])->value('id');
 
-                $uniqueKey = Str::random(5);
+                // $uniqueKey = Str::random(5);
 
-                while (QRCodeItem::where('key', $uniqueKey)->exists()) {
-                    $uniqueKey = Str::random(5);
-                }
+                // while (QRCodeItem::where('key', $uniqueKey)->exists()) {
+                //     $uniqueKey = Str::random(5);
+                // }
 
                 $qrCodeItem = QRCodeItem::updateOrCreate([
                     'serial_number' => $row[0],
                 ],[
-                    'key' => $uniqueKey,
+                    // 'key' => $uniqueKey,
                     'reward_item_id' => $rewardId,
                 ]);
 
-                $noofPack = $this->noofPackByRewardValue($rewardValue);
+                // $noofPack = $this->noofPackByRewardValue($rewardValue);
 
                 // final coupon path
                 $qrCodeRewardAmt = "{$newQRFolder}/{$row[1]}";
@@ -80,7 +80,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 $imagePath = "{$qrCodeRewardAmt}/{$row[0]}.png";
                 if(!Storage::disk('public')->exists($imagePath)){
                     $url = url('/')."/login/?uid={$qrCodeItem->id}";
-                    $couponUniqueURL = url('/')."?k={$qrCodeItem->key}";
+                    // $couponUniqueURL = url('/')."?k={$qrCodeItem->key}";
 
                     $qr_code_file = "qr-code/{$row[0]}.png";
                     $image = QrCode::format('png')
@@ -95,31 +95,31 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
                     $back = Image::make(public_path('images/coupon_template/back.png'));
 
-                    $back->text($noofPack, 370, 170, function($font) {
-                        $font->file(public_path('fonts/Lato-Bold.ttf'));
-                        $font->size(100);
-                        $font->color('#000');
-                        $font->align('center');
-                        $font->valign('bottom');
-                    });
+                    // $back->text($noofPack, 370, 170, function($font) {
+                    //     $font->file(public_path('fonts/Poppins-Bold.ttf'));
+                    //     $font->size(100);
+                    //     $font->color('#2C3689');
+                    //     $font->align('center');
+                    //     $font->valign('bottom');
+                    // });
 
-                    $back->text($rewardValue, 1600, 640, function($font) {
-                        $font->file(public_path('fonts/Lato-Bold.ttf'));
+                    $back->text($rewardValue, 1610, 600, function($font) {
+                        $font->file(public_path('fonts/Poppins-Bold.ttf'));
                         $font->size(150);
-                        $font->color('#000');
+                        $font->color('#2C3689');
                         $font->align('right');
                         $font->valign('bottom');
                     });
 
-                    $back->text($row[0], 145, 713, function($font) {
-                        $font->file(public_path('fonts/Lato-Bold.ttf'));
+                    $back->text($row[0], 500, 700, function($font) {
+                        $font->file(public_path('fonts/Poppins-Bold.ttf'));
                         $font->size(26);
-                        $font->color('#000');
+                        $font->color('#2C3689');
                         $font->align('left');
                         $font->valign('bottom');
                     });
                     $qrCode = Image::make(storage_path("app/public/{$qr_code_file}"));
-                    $back->insert($qrCode, 'top-left', 128, 100);
+                    $back->insert($qrCode, 'top-left', 110, 100);
 
                     $finalQRCode = storage_path("app/public/{$imagePath}");
                     $imgSave = $back->save($finalQRCode);
@@ -199,20 +199,20 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         return 200;
     }
 
-    public function noofPackByRewardValue($rewardValue){
-        switch ($rewardValue) {
-            case '50':
-                return 1;
-                break;
-            case '100':
-                return 2;
-                break;
-            case '200':
-                return 5;
-                break;
-            default:
-                return 0;
-                break;
-        }
-    }
+    // public function noofPackByRewardValue($rewardValue){
+    //     switch ($rewardValue) {
+    //         case '50':
+    //             return 2;
+    //             break;
+    //         case '100':
+    //             return 2;
+    //             break;
+    //         case '200':
+    //             return 2;
+    //             break;
+    //         default:
+    //             return 0;
+    //             break;
+    //     }
+    // }
 }
