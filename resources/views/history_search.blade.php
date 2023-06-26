@@ -3,7 +3,7 @@
 @section('title', 'history_search')
 
 @section('content')
-<div class="bg search_historybg">
+<div class="bg couponCodebg">
     <div class="content">
         <div class="history_search_heading">
             <h1 class="head-title text-center">HELLO!</h1>

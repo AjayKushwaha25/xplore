@@ -5,9 +5,14 @@
   --app-width: 600px;
 }
 
-@font-face {
+/* @font-face {
     font-family: myFirstFont;
     src: url(../fonts/BAUHS93.TTF);
+} */
+
+@font-face {
+    font-family: myFirstFont;
+    src: url(../fonts/Poppins-Regular.ttf);
 }
 
 .head-title {
@@ -187,7 +192,7 @@ p {
 }
 
 .rewardbg {
-    background-image: url("../images/confetti.gif"), url("../images/reward.png");
+    background-image: url("../images/confetti.gif");
 }
 
 .error{

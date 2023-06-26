@@ -70,7 +70,7 @@
 </style>
 
 @section('content')
-<div class="bg search_historybg">
+<div class="bg couponCodebg">
     <div class="">
         <div class="d-flex flex-row justify-content-around bd-highlight mb-3 container">
             <div class="p-2 bd-highlight item">

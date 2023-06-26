@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<div class="bg signupbg">
+<div class="bg couponCodebg">
     <div class="content">
         <div>
             <h1 class="head-title text-center">HELLO!</h1>

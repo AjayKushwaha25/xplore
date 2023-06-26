@@ -21,7 +21,7 @@
 @endsection
 
 @section('content')
-<div class="bg rewardbg">
+<div class="bg couponCodebg">
     <div class="content">
         @if(\Session::get('status')=='success')
         <h1 class="head-title animate__animated animate__bounceIn">YOU WON</h1>
