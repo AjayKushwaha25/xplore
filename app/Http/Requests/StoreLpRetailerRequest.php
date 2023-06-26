@@ -27,7 +27,7 @@ class StoreLpRetailerRequest extends FormRequest
             'name' => 'bail|required',
             'mobile_number' => 'bail|required|numeric|digits:10',
             'whatsapp_number' => 'bail|required|numeric|digits:10',
-            'upi_id' => 'bail|required|unique:lp_register,upi_id',
+            'upi_id' => 'bail|required',
         ];
     }
 }

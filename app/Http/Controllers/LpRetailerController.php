@@ -17,7 +17,8 @@ class LpRetailerController extends Controller
      */
     public function index()
     {
-        //
+        $lp_retailer = LpRetailer::all();
+
     }
 
     /**
@@ -52,16 +53,25 @@ class LpRetailerController extends Controller
             ]);
         }
 
-        $couponCode = CouponCode::create([
-            'code' => $this->getGenerateNumber(),
-            'reward_item_id' => RewardItem::inRandomOrder()->value('id')
-        ]);
+        $couponCodeValue = CouponCode::with('rewardItem:id,value')->where('is_redeemed', 0)->inRandomOrder()->first(['id','code','reward_item_id']);
 
-        $retailer->couponCodes()->attach($couponCode->id);
+            
+        $rewardValue = $couponCodeValue->rewardItem->value;
+
+        $retailer->couponCodes()->attach($couponCodeValue->id);
+
+        $couponCodeValue->update([
+            'is_redeemed' => 1
+        ]);
 
         return redirect()->route('thank_you')->with([
             'status' => 'success',
-            'message' => 'Cashback will be credited withtin 24 Hours.'
+            'message' => 'Cashback will be credited withtin 24 Hours.',
+            // 'status' => 'success',
+            'data' => [
+                'img_path' => "coin{$rewardValue}.png",
+                'value' => $rewardValue,
+            ],
         ]);
 
         
@@ -119,6 +129,7 @@ class LpRetailerController extends Controller
         $randomNumber = random_int(1, 5500);
         return $randomNumber;
     }
+
 
     public function thankYou(){
         return view('thank-you');

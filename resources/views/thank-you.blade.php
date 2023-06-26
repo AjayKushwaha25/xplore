@@ -24,11 +24,11 @@
 @endsection
 
 @section('content')
-<div class="bg couponCodebg">
+<div class="bg couponRewardbg">
     <div class="content">
         @if(\Session::get('status')=='success')
         <h1 class="head-title animate__animated animate__bounceIn">THANK YOU !</h1>
-        
+        <img class="img-fluid coin-img animate__animated animate__bounceInDown" src="{{ asset('images/icons/'.\Session::get('data')['img_path']) }}">
         <h3 class="head-title animate__animated animate__bounceInUp">{{ \Session::get('message') }}</h3>
         @else
         <script type="text/javascript">

@@ -17,9 +17,4 @@ class Retailer extends Authenticatable
         'whatsapp_number',
         'upi_id',
     ];
-
-    public function couponCodes()
-    {
-        return $this->belongsToMany(CouponCode::class, 'coupon_code_histories', 'retailer_id', 'coupon_code_id');
-    }
 }

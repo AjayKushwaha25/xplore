@@ -190,7 +190,9 @@ p {
 .couponCodebg {
     background-image: url("../images/coupon_code.jpg");
 }
-
+.couponRewardbg{
+    background-image:  url("../images/confetti.gif"), url("../images/Banner_AdobeExpress.gif");
+}
 .rewardbg {
     background-image: url("../images/confetti.gif");
 }
