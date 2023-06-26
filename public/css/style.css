@@ -188,13 +188,7 @@ p {
 }
 
 .couponCodebg {
-    background-image: url("../images/Banner_video.gif");
-<<<<<<< HEAD
-=======
-}
-.couponRewardbg{
-    background-image:  url("../images/confetti.gif"), url("../images/Banner_video.gif");
->>>>>>> 1f3126a6df0a6beda5cf21f4445b0546526d7036
+    background-image: url("../images/coupon_code.jpg");
 }
 .rewardbg {
     background-image:  url("../images/confetti.gif"), url("../images/Banner_video.gif");
