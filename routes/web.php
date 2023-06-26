@@ -15,23 +15,10 @@ use App\Http\Controllers\Admin\{UserController, BackendController, AdminControll
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/coupon/register', [CouponCodeController::class, 'index'])->name('coupon.index');
+Route::post('/coupon', [CouponCodeController::class, 'store'])->name('coupon.store');
 
-// ------------------------------------------------------------------------------------------------------- //
-/* Delete after all qr working */
-Route::get('serial_number', function() {
-    return view('serial_number');
-})->name('serial_number');
-
-// Route::get('/ds_index', function() {
-//     return view('ds_index');
-// })->name('ds_index');
-
-Route::get('/lp_registration', [PagesController::class, 'lp_registration'])->name('lp_registration');
-Route::post('/coupon', [CouponCodeController::class, 'coupon'])->name('coupon');
-
-Route::post('update_key', [QRCodeItemController::class, 'updateKey'])->name('update.key');
-/* Delete after all qr working */
-// ------------------------------------------------------------------------------------------------------- //
+Route::get('thank-you', [CouponCodeController::class, 'thankYou'])->name('thank_you');
 
 Route::group(['middleware' => ['redirect.url']], function() {
     Route::get('/', [PagesController::class, 'login'])->name('redirect_login');
