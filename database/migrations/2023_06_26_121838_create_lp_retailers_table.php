@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('coupon_code_histories', function (Blueprint $table) {
-            // $table->uuid('id')->primary();
-            $table->foreignUuid('retailer_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('coupon_code_id')->constrained()->cascadeOnDelete();
+        Schema::create('lp_retailers', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->string('mobile_number')->unique();
+            $table->string('whatsapp_number');
+            $table->string('upi_id')->unique();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-
-            $table->primary(['retailer_id','coupon_code_id']);
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('coupons_code_histories');
+        Schema::dropIfExists('lp_retailers');
     }
 };

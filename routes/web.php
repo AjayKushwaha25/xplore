@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{PagesController, LoginController,RegisterController, CouponCodeController};
+use App\Http\Controllers\{PagesController, LoginController,RegisterController, CouponCodeController,LpRetailerController};
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\{UserController, BackendController, AdminController, QRCodeItemController, RetailerController, LoginHistoryController, PayoutController};
 
@@ -15,10 +15,10 @@ use App\Http\Controllers\Admin\{UserController, BackendController, AdminControll
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/coupon/register', [CouponCodeController::class, 'index'])->name('coupon.index');
-Route::post('/coupon', [CouponCodeController::class, 'store'])->name('coupon.store');
+Route::get('/coupon/register', [LpRetailerController::class, 'create'])->name('lp_retailer.create');
+Route::post('/register/store', [LpRetailerController::class, 'store'])->name('lp_retailer.store');
 
-Route::get('thank-you', [CouponCodeController::class, 'thankYou'])->name('thank_you');
+Route::get('thank-you', [LpRetailerController::class, 'thankYou'])->name('thank_you');
 
 Route::group(['middleware' => ['redirect.url']], function() {
     Route::get('/', [PagesController::class, 'login'])->name('redirect_login');
