@@ -15,20 +15,18 @@ class CouponCodeController extends Controller
     public function store(StoreCCRetailerRequest $request)
     {
         // $retailer = Retailer::firstOrCreate($request->validated());
-        $data = [
-            'mobile_number' => $request->validated('mobile_number'),
+        $retailer = Retailer::updateOrCreate([
+            'mobile_number' => $request->validated('mobile_number')
+        ],[
+            'name' => $request->validated('name'),
+            'whatsapp_number' => $request->validated('whatsapp_number'),
             'upi_id' => $request->validated('upi_id'),
-        ];
-        $retailer = Retailer::where($data)->first();
+        ]);
         if(!$retailer){
-            $retailer = Retailer::create($request->validated());
-
-            if(!$retailer){
-                return back()->with([
-                    'status' => 'failed',
-                    'message' => 'Something went wrong, please try again later',
-                ]);
-            }
+            return back()->with([
+                'status' => 'failed',
+                'message' => 'Something went wrong, please try again later',
+            ]);
         }
 
         $couponCode = CouponCode::create([

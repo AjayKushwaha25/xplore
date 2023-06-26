@@ -124,7 +124,7 @@ class QRCodeItemController extends Controller
         // dd($request->validated(), $id);
         $data = [
             "serial_number" => $request->validated('serial_number'),
-            "key" => $request->validated('key'),
+            // "key" => $request->validated('key'),
         ];
         $qrCodeUpdate = QRCodeItem::whereId($id)->first();
         $update = $qrCodeUpdate->update($data);
@@ -166,29 +166,30 @@ class QRCodeItemController extends Controller
     }
 
 
-    public function updateKey(Request $request)
-    {
-        $key = $request->key;
-        $serial_number = $request->serial_number;
-        $qrcodeData = QRCodeItem::whereSerialNumber($serial_number)->first();
-        if(!$qrcodeData){
-            return back()->with('failed','Invalid Serial Number.');
-        }
+    // public function updateKey(Request $request)
+    // {
+    //     $key = $request->key;
+    //     $serial_number = $request->serial_number;
+    //     $qrcodeData = QRCodeItem::whereSerialNumber($serial_number)->first();
+    //     if(!$qrcodeData){
+    //         return back()->with('failed','Invalid Serial Number.');
+    //     }
 
-        $qrcodeData->update([
-            'key' => $key,
-        ]);
-        preg_match('/(\d+)$/', $serial_number, $matches);
-        $number = (int)$matches[1];
+    //     $qrcodeData->update([
+    //         'key' => $key,
+    //     ]);
+    //     preg_match('/(\d+)$/', $serial_number, $matches);
+    //     $number = (int)$matches[1];
 
-        // Increment the number and update the value
-        $newKey = preg_replace_callback('/\d+$/', function($matches) {
-            return ++$matches[0];
-        }, $serial_number);
-        // dd($serial_number, $newKey);
-        session(['sr_no' => $newKey]);
-        // dd($qrcodeData);
-        return redirect()->route('login',['uid' => $qrcodeData->id]);
-        // return back()->with('success','Update successfully.');
-    }
+    //     // Increment the number and update the value
+    //     $newKey = preg_replace_callback('/\d+$/', function($matches) {
+    //         return ++$matches[0];
+    //     }, $serial_number);
+    //     // dd($serial_number, $newKey);
+    //     session(['sr_no' => $newKey]);
+    //     // dd($qrcodeData);
+    //     return redirect()->route('login',['uid' => $qrcodeData->id]);
+    //     // return back()->with('success','Update successfully.');
+    // }
+    
 }

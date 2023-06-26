@@ -23,11 +23,11 @@ class BulkQRCodeImport implements ToCollection, WithValidation, WithStartRow
         foreach ($rows as $row)
         {
             $qrCode = QRCodeItem::whereSerialNumber($row[0])->first();
-            if($qrCode){
-                $qrCode->update([
-                    'key' => $row[1],
-                ]);
-            }
+            // if($qrCode){
+            //     $qrCode->update([
+            //         'key' => $row[1],
+            //     ]);
+            // }
         }
     }
 
@@ -35,14 +35,14 @@ class BulkQRCodeImport implements ToCollection, WithValidation, WithStartRow
     {
         return [
             '*.0' => ['required'],
-            '*.1' => ['required'],
+            // '*.1' => ['required'],
         ];
     }
     public function customValidationAttributes()
     {
         return [
             '0' => 'Serial Number',
-            '1' => 'Key',
+            // '1' => 'Key',
         ];
     }
     public function startRow(): int

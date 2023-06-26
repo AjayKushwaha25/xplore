@@ -20,7 +20,6 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
             'Amount',
             'Username',
             'Mobile number',
-            'WD Code',
             'UPI ID',
             'Serial Number',
             'Notes',
@@ -34,10 +33,10 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
             $loginHistory->qRCodeItem->rewardItem->value,
             $loginHistory->retailer->name,
             $loginHistory->retailer->mobile_number,
-            $loginHistory->qRCodeItem->wd->code,
+            // $loginHistory->qRCodeItem->wd->code,
             $loginHistory->retailer->upi_id,
             $loginHistory->qRCodeItem->serial_number,
-            "{$loginHistory->qRCodeItem->wd->code}:{$loginHistory->retailer->upi_id}:{$loginHistory->retailer->mobile_number}:{$loginHistory->qRCodeItem->serial_number}:\"{$loginHistory->created_at}\"",
+            "{$loginHistory->retailer->upi_id}:{$loginHistory->retailer->mobile_number}:{$loginHistory->qRCodeItem->serial_number}:\"{$loginHistory->created_at}\"",
             $loginHistory->created_at
         ];
     }
@@ -52,7 +51,7 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
                 $event->sheet->getDelegate()->getColumnDimension('D')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('E')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('F')->setAutoSize(true);
-                $event->sheet->getDelegate()->getColumnDimension('G')->setAutoSize(true);
+                // $event->sheet->getDelegate()->getColumnDimension('G')->setAutoSize(true);
 
             },
         ];
@@ -60,7 +59,7 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
     }
 
     /**
@@ -68,7 +67,7 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
     */
     public function collection()
     {
-        return LoginHistory::with(['retailer:id,name,mobile_number,upi_id,whatsapp_number','qRCodeItem:id,serial_number,reward_item_id,wd_id','qRCodeItem.wd:id,code','qRCodeItem.rewardItem:id,value'])
+        return LoginHistory::with(['retailer:id,name,mobile_number,upi_id,whatsapp_number','qRCodeItem:id,serial_number,reward_item_id','qRCodeItem.rewardItem:id,value'])
                     ->whereBetween('created_at',[$this->startDate, $this->endDate])
                     ->select('id','retailer_id','q_r_code_item_id','created_at')
                     ->orderBy('created_at','ASC')

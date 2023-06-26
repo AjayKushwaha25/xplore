@@ -25,7 +25,7 @@ class UpdateQRCodeItemRequest extends FormRequest
     {
         return [
             'serial_number' => 'required',
-            'key' => 'required',
+            // 'key' => 'required',
         ];
     }
 }
