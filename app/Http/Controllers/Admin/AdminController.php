@@ -19,7 +19,7 @@ class AdminController extends Controller
 {
     public function index(){
         $loginHistories = LoginHistory::with([
-                'retailer:id,name,mobile_number',
+                'retailer:id,name,mobile_number,coupon_code',
                 'qRCodeItem:id,serial_number,reward_item_id',
                 'qRCodeItem.rewardItem:id,value'
             ])

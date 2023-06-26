@@ -64,6 +64,18 @@
                 @enderror
             </div>
 
+            <div class="mb-2">
+                <input type="number" class="form-input @error('coupon_code') is-invalid @enderror" value="{{ old('coupon_code') }}" id="coupon_code" placeholder="Enter coupon code" name="coupon_code" required>
+                @error('coupon_code')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+                <script type="text/javascript">
+                    toastr.error("{{ $message }}", 'Error!',{"positionClass": "toast-top-right"})
+                </script>
+                @enderror
+            </div>
+
             <div class="text-center mt-4">
                 <input type="hidden" name="uid" value="{{ $qrcodeId ?? '' }}">
                 <button type="submit" class="bg-color" @if($data['status'] == 'failed') disabled @endif>SIGN UP</button>

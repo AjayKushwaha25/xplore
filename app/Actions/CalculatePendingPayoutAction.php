@@ -9,7 +9,7 @@ class CalculatePendingPayoutAction
     public function handle($retailerId, $is_dashboard = false): array
     {
         $loginHistory = LoginHistory::with([
-                'qRCodeItem:id,reward_item_id,serial_number,key',
+                'qRCodeItem:id,reward_item_id,serial_number',
                 'qRCodeItem.rewardItem:id,value'
             ])
             ->whereRetailerId($retailerId)

@@ -22,9 +22,7 @@ class QRCodeItem extends Model
     ];
 
 
-    public function wd() {
-        return $this->belongsTo(WD::class);
-    }
+    
     public function rewardItem() {
         return $this->belongsTo(RewardItem::class);
     }

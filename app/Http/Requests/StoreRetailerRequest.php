@@ -28,7 +28,8 @@ class StoreRetailerRequest extends FormRequest
             'mobile_number' => 'bail|required|numeric|digits:10|unique:retailers,mobile_number',
             'whatsapp_number' => 'bail|required|numeric|digits:10',
             'upi_id' => 'bail|required|unique:retailers,upi_id',
-            'uid' => 'sometimes'
+            'uid' => 'sometimes',
+            'coupon_code' => 'required|digits:4',
         ];
     }
 }

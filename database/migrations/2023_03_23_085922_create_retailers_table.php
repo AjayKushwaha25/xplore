@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('mobile_number')->unique();
             $table->string('whatsapp_number');
             $table->string('upi_id')->unique();
+            $table->string('coupon_code')->unique();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
