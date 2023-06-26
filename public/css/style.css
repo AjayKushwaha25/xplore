@@ -188,10 +188,10 @@ p {
 }
 
 .couponCodebg {
-    background-image: url("../images/Banner_AdobeExpress.gif");
+    background-image: url("../images/Banner_video.gif");
 }
 .couponRewardbg{
-    background-image:  url("../images/confetti.gif"), url("../images/Banner_AdobeExpress.gif");
+    background-image:  url("../images/confetti.gif"), url("../images/Banner_video.gif");
 }
 .rewardbg {
     background-image:  url("../images/confetti.gif"), url("../images/Banner_video.gif");
