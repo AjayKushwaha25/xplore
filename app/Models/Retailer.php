@@ -18,9 +18,4 @@ class Retailer extends Authenticatable
         'upi_id',
         'coupon_code',
     ];
-
-    public function couponCodes()
-    {
-        return $this->belongsToMany(CouponCode::class, 'coupon_code_histories', 'retailer_id', 'coupon_code_id');
-    }
 }

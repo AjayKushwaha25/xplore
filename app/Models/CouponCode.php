@@ -13,6 +13,7 @@ class CouponCode extends Model
     protected $fillable = [
         'code',
         'reward_item_id',
+        'is_redeemed'
     ];
 
     public function retailers()
