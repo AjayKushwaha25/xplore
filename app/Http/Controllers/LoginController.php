@@ -19,52 +19,47 @@ class LoginController extends Controller
             ]);
         }
 
-        /* Check Daily Limit */
-        /*$latestCreatedAtDateForUser = LoginHistory::whereRetailerId($retailerId)->latest()->value('created_at');
-        if($latestCreatedAtDateForUser){
-            if($latestCreatedAtDateForUser->toDateString() == now()->toDateString()){
-                return back()->with([
+        $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->whereSerialNumber($request->validated('coupon_code'))->first();
+        if(!$qrCodeItem){
+            return back()->withInput()->with([
                     'status' => 'failed',
-                    'message' => 'Your daily limit is exceeded.'
+                    'message' => 'Enter valid Coupon Code.'
                 ]);
-            }
-        }*/
+        }
+
+        $rewardValue = RewardItem::whereId($qrCodeItem->reward_item_id)->whereStatus(1)->value('value');
+
+        if(!$rewardValue){
+            return back()->withInput()->with([
+                'status' => 'failed',
+                'message' => 'Invalid Coupon.'
+            ]);
+        }
 
         if (Auth::guard('retailer')->loginUsingId($retailerId)) {
-            
-            $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->whereIsRedeemed(0)->first();
-            // dd($qrCodeItem);
-            if(!$qrCodeItem){
-                return redirect()->route('login',['uid'=>$request->validated('uid')]);
-            }
-            $rewardValue = RewardItem::whereId($qrCodeItem->reward_item_id)->whereStatus(1)->value('value');
-            if($rewardValue){
-                $qrCodeItem->is_redeemed = 1;
-                $qrCodeItem->update();
+            $qrCodeItem->is_redeemed = 1;
+            $qrCodeItem->update();
+            $data = [
+                'retailer_id' => Auth::guard('retailer')->id(),
+                'q_r_code_item_id' => $request->validated('uid'),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ];
 
-                $data = [
-                    'retailer_id' => Auth::guard('retailer')->id(),
-                    'q_r_code_item_id' => $request->validated('uid'),
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                ];
+            $loginHistory = LoginHistory::create($data);
 
-                // dd($data);
-                $loginHistory = LoginHistory::create($data);
-
-                return redirect()->route('reward')->with([
-                    'status' => 'success',
-                    'data' => [
-                        'img_path' => "coin{$rewardValue}.png",
-                        'value' => $rewardValue,
-                    ]
-                ]);
-            }else{
-                return back()->with([
-                    'status' => 'failed',
-                    'message' => 'Invalid Coupon.'
-                ]);
-            }
+            return redirect()->route('reward')->with([
+                'status' => 'success',
+                'data' => [
+                    'img_path' => "coin{$rewardValue}.png",
+                    'value' => $rewardValue,
+                ]
+            ]);
+        }else{
+            return back()->with([
+                'status' => 'failed',
+                'message' => 'Unable to login. Please try again later.'
+            ]);
         }
     }
 

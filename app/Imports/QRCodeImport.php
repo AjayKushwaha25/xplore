@@ -57,20 +57,11 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 $rewardValue = $row[1];
                 $rewardId = RewardItem::whereValue($row[1])->value('id');
 
-                // $uniqueKey = Str::random(5);
-
-                // while (QRCodeItem::where('key', $uniqueKey)->exists()) {
-                //     $uniqueKey = Str::random(5);
-                // }
-
                 $qrCodeItem = QRCodeItem::updateOrCreate([
                     'serial_number' => $row[0],
                 ],[
-                    // 'key' => $uniqueKey,
                     'reward_item_id' => $rewardId,
                 ]);
-
-                // $noofPack = $this->noofPackByRewardValue($rewardValue);
 
                 // final coupon path
                 $qrCodeRewardAmt = "{$newQRFolder}/{$row[1]}";
@@ -95,24 +86,16 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
                     $back = Image::make(public_path('images/coupon_template/back.png'));
 
-                    // $back->text($noofPack, 370, 170, function($font) {
-                    //     $font->file(public_path('fonts/Poppins-Bold.ttf'));
-                    //     $font->size(100);
-                    //     $font->color('#2C3689');
-                    //     $font->align('center');
-                    //     $font->valign('bottom');
-                    // });
-
-                    $back->text($rewardValue, 1610, 600, function($font) {
-                        $font->file(public_path('fonts/Poppins-Bold.ttf'));
+                    $back->text($rewardValue, 1340, 600, function($font) {
+                        $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
                         $font->size(150);
                         $font->color('#2C3689');
-                        $font->align('right');
+                        $font->align('left');
                         $font->valign('bottom');
                     });
 
                     $back->text($row[0], 500, 700, function($font) {
-                        $font->file(public_path('fonts/Poppins-Bold.ttf'));
+                        $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
                         $font->size(26);
                         $font->color('#2C3689');
                         $font->align('left');
@@ -199,20 +182,4 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         return 200;
     }
 
-    // public function noofPackByRewardValue($rewardValue){
-    //     switch ($rewardValue) {
-    //         case '50':
-    //             return 2;
-    //             break;
-    //         case '100':
-    //             return 2;
-    //             break;
-    //         case '200':
-    //             return 2;
-    //             break;
-    //         default:
-    //             return 0;
-    //             break;
-    //     }
-    // }
 }
