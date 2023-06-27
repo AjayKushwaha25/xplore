@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreLpRetailerRequest;
 use App\Http\Requests\UpdateLpRetailerRequest;
 
-use App\Models\{ CouponCode, Retailer, RewardItem, LpRetailer };
+use App\Models\{ CouponCode, Retailer, RewardItem, LpRetailer,CouponCodeHistory };
 
 class LpRetailerController extends Controller
 {
@@ -18,6 +18,13 @@ class LpRetailerController extends Controller
     public function index()
     {
         $lp_retailer = LpRetailer::all();
+        // dd($lp_retailer);
+        $data = [
+            'lp_retailer' =>  $lp_retailer,
+        ];
+        return view('admin.view.lp_retailer', compact('data'));
+
+
 
     }
 
@@ -133,5 +140,14 @@ class LpRetailerController extends Controller
 
     public function thankYou(){
         return view('thank-you');
+    }
+
+    public function viewLoginHistory(){
+        $lpretailer_history = CouponCodeHistory::all();
+        // dd($lpretailer_history);
+        $data = [
+            'lp_retailer_history' =>  $lpretailer_history,
+        ];
+        return view('admin.view.lp_retailer_histories', compact('data'));
     }
 }

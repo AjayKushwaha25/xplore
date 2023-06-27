@@ -100,6 +100,8 @@ class AdminController extends Controller
             'payouts',
             'retailers',
             'login_histories',
+            'lp_retailers',
+            'coupon_code_histories',  
         ];
         // dd($tables);
         $data = [

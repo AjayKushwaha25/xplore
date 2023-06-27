@@ -33,25 +33,20 @@
                             <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Mobile Number</th>
-                                        <th>Whatsapp Number</th>
-                                        <th>UPI ID</th>
+                                        <th>Lp retailer id</th>
+                                        <th>coupon code id</th>                                    
                                         <th>Created At</th>
-                                        <th>Action</th>
+                                        <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
-                                @forelse($data['lp_retailer'] as $lp_retailer)
+                                @forelse($data['lp_retailer_history'] as $lp_retailer_history)
 
                          
                             <tr>
-                                <td> {{ $lp_retailer->name }}</td>
-                                <td> {{ $lp_retailer->mobile_number }}</td>
-                                <td> {{ $lp_retailer->whatsapp_number }}</td>
-                                <td> {{ $lp_retailer->upi_id }}</td>
-                                <td> {{ $lp_retailer->created_at }}</td>
-                                <td><center><i class="fas fa-eye"></i></center></td>
-                   
+                                <td> {{ $lp_retailer_history->lp_retailer_id }}</td>
+                                <td> {{ $lp_retailer_history->coupon_code_id }}</td>
+                                <td> {{ $lp_retailer_history->created_at }}</td>
+                               
                             </tr>
                                 @empty
                                 <i>No Records found</i>

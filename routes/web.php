@@ -100,5 +100,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         Route::get('loginHistoriesList', [LoginHistoryController::class, 'loginHistoriesList'])->name('login_history_lists');
         Route::get('login-histories', [LoginHistoryController::class, 'index'])->name('login-histories');
+        Route::get('lp_retailer', [LpRetailerController::class, 'index'])->name('lpretailer_index');
+        Route::get('lpretailer_histories', [LpRetailerController::class, 'viewLoginHistory'])->name('lpretailer_histories');
     });
 });

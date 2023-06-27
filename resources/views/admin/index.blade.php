@@ -62,7 +62,7 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium mb-1">Total Coupons</p>
-                                                
+                                                <h5 class="mb-0">{{ $data['counts']['totalCouponRedeemedCount'] }} | {{ $data['counts']["totalCouponCount"] }}</h5>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
@@ -85,7 +85,7 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium mb-1">₹ {{ $coupon->value }} Coupons</p>
-                                                
+                                                <h5 class="mb-0">{{ $data['counts']["countRedeemed{$coupon->value}"] }} | {{ $data['counts']["count{$coupon->value}"] }}</h5>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">

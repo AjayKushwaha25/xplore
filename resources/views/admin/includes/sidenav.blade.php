@@ -48,8 +48,8 @@
                         <span key="t-user">LP Retailers</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('admin.retailers.index') }}" key="t-view-user">View LP Retailer</a></li>
-                        <li><a href="{{ route('admin.login-histories') }}" key="t-view-user">LP Login History</a></li>
+                        <li><a href="{{ route('admin.lpretailer_index') }}" key="t-view-user">View LP Retailer</a></li>
+                        <li><a href="{{ route('admin.lpretailer_histories') }}" key="t-view-user">LP Login History</a></li>
                     </ul>
                 </li>
                 @if(Auth::user()->roles->first()->slug == 'super_admin')
