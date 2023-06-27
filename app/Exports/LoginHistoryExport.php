@@ -73,7 +73,7 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
     {
         return  LoginHistory::query()
                             ->with([
-                                'retailer:id,name,mobile_number,whatsapp_number,upi_id',
+                                'lpretailer:id,name,mobile_number,whatsapp_number,upi_id',
                                 'qRCodeItem:id,serial_number,reward_item_id',
                                 'qRCodeItem.rewardItem:id,value'
                                 // 'qRCodeItem.wd:id,code'
