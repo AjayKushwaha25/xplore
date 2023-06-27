@@ -31,7 +31,9 @@ class LoginController extends Controller
         }*/
 
         if (Auth::guard('retailer')->loginUsingId($retailerId)) {
+            
             $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->whereIsRedeemed(0)->first();
+            // dd($qrCodeItem);
             if(!$qrCodeItem){
                 return redirect()->route('login',['uid'=>$request->validated('uid')]);
             }
@@ -46,6 +48,8 @@ class LoginController extends Controller
                     'ip_address' => $request->ip(),
                     'user_agent' => $request->userAgent(),
                 ];
+
+                // dd($data);
                 $loginHistory = LoginHistory::create($data);
 
                 return redirect()->route('reward')->with([
