@@ -21,7 +21,6 @@ class RetailerExport implements FromCollection, WithMapping, WithHeadings, WithE
             'Mobile number',
             'Whatsapp number',
             'UPI ID',
-            // 'Coupon Code',
             'Registered At',
         ];
     }
@@ -33,7 +32,6 @@ class RetailerExport implements FromCollection, WithMapping, WithHeadings, WithE
             $retailer->mobile_number,
             $retailer->whatsapp_number,
             $retailer->upi_id,
-            // $retailer->coupon_code,
             $retailer->created_at
         ];
     }

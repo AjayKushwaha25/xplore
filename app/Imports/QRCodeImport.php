@@ -37,20 +37,42 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         $todaysDate = now()->format('d-m-Y');
         // $batch
         $newQRFolder = "coupons/{$todaysDate}";
-        if(!Storage::disk('public')->exists($newQRFolder)) {
-            Storage::disk('public')->makeDirectory($newQRFolder, 0777, true); //creates directory
-        }
-        $finalFront = storage_path("app/public/{$newQRFolder}/front.png");
 
-        if(!Storage::disk('public')->exists($finalFront)){
+        if(!storage_disk()->exists($newQRFolder)) {
+            storage_disk()->makeDirectory($newQRFolder, 0777, true); //creates directory
+        }
+
+        // $finalFront = storage_path("app/public/{$newQRFolder}/front.png");
+        $finalFrontFileName = "front.png";
+        if(config('app.env')=='local'){
+            $finalFront = Storage::disk('public')->path("{$newQRFolder}/{$finalFrontFileName}");
+        }else{
+            $finalFront = Storage::disk('gcs')->publicUrl($finalFrontFileName);
+        }
+
+        if(!storage_disk()->exists($finalFront)){
             $front = Image::make(public_path('images/coupon_template/front.png'));
-            $imgSave = $front->save($finalFront);
 
-            $image = new Imagick($finalFront);
-            $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-            $image->setImageResolution(300, 300);
-            $image->writeImage($finalFront);
+            if(config('app.env')=='local'){
+                $front->save($finalFront);
+                $image = new Imagick($finalFront);
+                $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                $image->setImageResolution(300, 300);
+                $image->writeImage($finalFront);
+            }else{
+                $imageData = $front->encode();
+                Storage::disk('gcs')->put("{$finalFrontFileName}", $imageData);
+
+                $image = new Imagick();
+                $image->readImageBlob(Storage::disk('gcs')->get("{$finalFrontFileName}"));
+                $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                $image->setImageResolution(300, 300);
+                $imageData = $image->getImageBlob();
+
+                Storage::disk('gcs')->put("{$finalFrontFileName}", $imageData);
+            }
         }
+
         foreach ($rows as $key => $row)
         {
             try {
@@ -65,24 +87,37 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
                 // final coupon path
                 $qrCodeRewardAmt = "{$newQRFolder}/{$row[1]}";
-                if(!Storage::disk('public')->exists($qrCodeRewardAmt)) {
-                    Storage::disk('public')->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
+
+                if(!storage_disk()->exists($qrCodeRewardAmt)) {
+                    storage_disk()->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
                 }
+
                 $imagePath = "{$qrCodeRewardAmt}/{$row[0]}.png";
-                if(!Storage::disk('public')->exists($imagePath)){
+                if(!storage_disk()->exists($imagePath)){
                     $url = url('/')."/login/?uid={$qrCodeItem->id}";
                     // $couponUniqueURL = url('/')."?k={$qrCodeItem->key}";
 
                     $qr_code_file = "qr-code/{$row[0]}.png";
-                    $image = QrCode::format('png')
+                    $qrCodeImage = QrCode::format('png')
                             ->size(550)->errorCorrection('H')
                             ->generate($url);
 
-                    $storeQrCode = Storage::disk('public')->put($qr_code_file, $image);
-                    $image = new Imagick(storage_path("app/public/{$qr_code_file}"));
-                    $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-                    $image->setImageResolution(300, 300);
-                    $image->writeImage(storage_path("app/public/{$qr_code_file}"));
+                    if(config('app.env')=='local'){
+                        Storage::disk('public')->put($qr_code_file, $qrCodeImage);
+                        $image = new Imagick(Storage::disk('public')->path("{$qr_code_file}"));
+                        $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                        $image->setImageResolution(300, 300);
+                        $image->writeImage(Storage::disk('public')->path("{$qr_code_file}"));
+                    }else{
+                        Storage::disk('gcs')->put($qr_code_file, $qrCodeImage);
+                        $image = new Imagick();
+                        $image->readImageBlob(Storage::disk('gcs')->get("{$qr_code_file}"));
+                        $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                        $image->setImageResolution(300, 300);
+                        $imageData = $image->getImageBlob();
+
+                        Storage::disk('gcs')->put("{$qr_code_file}", $imageData);
+                    }
 
                     $back = Image::make(public_path('images/coupon_template/back.png'));
 
@@ -101,17 +136,33 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                         $font->align('left');
                         $font->valign('bottom');
                     });
-                    $qrCode = Image::make(storage_path("app/public/{$qr_code_file}"));
-                    $back->insert($qrCode, 'top-left', 110, 100);
 
-                    $finalQRCode = storage_path("app/public/{$imagePath}");
-                    $imgSave = $back->save($finalQRCode);
+                    if(config('app.env')=='local'){
+                        $qrCode = Image::make(Storage::disk('public')->path("{$qr_code_file}")); //qr-code
+                        $back->insert($qrCode, 'top-left', 110, 100);
 
-                    $image = new Imagick($finalQRCode);
-                    $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-                    $image->setImageResolution(300, 300);
-                    $image->writeImage($finalQRCode);
-                    // dd($image);
+                        $finalQRCode = Storage::disk('public')->path("{$imagePath}");
+                        $imgSave = $back->save($finalQRCode);
+
+                        $image = new Imagick($finalQRCode);
+                        $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                        $image->setImageResolution(300, 300);
+                        $image->writeImage($finalQRCode);
+                    }else{
+                        $qrCode = Image::make(Storage::disk('gcs')->publicUrl("{$qr_code_file}")); //qr-code
+                        $back->insert($qrCode, 'top-right', 106, 104);
+
+                        $imageData = $back->encode();
+                        Storage::disk('gcs')->put("{$imagePath}", $imageData);
+
+                        $image = new Imagick();
+                        $image->readImageBlob(Storage::disk('gcs')->get("{$imagePath}"));
+                        $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                        $image->setImageResolution(300, 300);
+                        $imageData1 = $image->getImageBlob();
+
+                        Storage::disk('gcs')->put("{$imagePath}", $imageData1);
+                    }
 
                     $qrCodeItem->update([
                         'url' => $url,
