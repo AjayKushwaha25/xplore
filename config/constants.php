@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'APP_NAME' => 'ITC Players Klov',
+    'APP_NAME' => 'ITC Xplore',
     'error'=>[
         'option' => 'error',
         'title' => 'Error!',
@@ -10,5 +10,5 @@ return [
         'option' => 'error',
         'title' => 'Success!',
     ],
-    'export_filename_prefix' => 'players-klov-'
+    'export_filename_prefix' => 'Xplore-'
 ];

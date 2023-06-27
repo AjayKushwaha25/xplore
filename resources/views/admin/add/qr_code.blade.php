@@ -117,7 +117,7 @@ $publicPath = public_path($path);
                 </div>
             </div>
 
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-md-12">
                     <div class="row">
                         <form action="{{ route('admin.qr-codes.bulk-update') }}" method="POST" enctype="multipart/form-data">
@@ -190,7 +190,7 @@ $publicPath = public_path($path);
                         </form>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
         <!-- End Page-content -->
     </div>

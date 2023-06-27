@@ -15,12 +15,16 @@ class CouponCodeHistory extends Model
         'coupon_code_id'
     ];
 
-    public function retailer()
+    public function lpRetailer()
     {
-        return $this->belongsTo(Retailer::class);
+        return $this->belongsTo(LpRetailer::class);
     }
 
     public function rewardItem() {
         return $this->belongsTo(RewardItem::class);
+    }
+
+    public function couponCode() {
+        return $this->belongsTo(CouponCode::class);
     }
 }
