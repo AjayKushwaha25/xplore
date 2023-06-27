@@ -47,7 +47,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         if(config('app.env')=='local'){
             $finalFront = Storage::disk('public')->path("{$newQRFolder}/{$finalFrontFileName}");
         }else{
-            $finalFront = Storage::disk('gcs')->publicUrl($finalFrontFileName);
+            $finalFront = Storage::disk('gcs')->publicUrl("{$newQRFolder}/{$finalFrontFileName}");
         }
 
         if(!storage_disk()->exists($finalFront)){
@@ -61,15 +61,15 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 $image->writeImage($finalFront);
             }else{
                 $imageData = $front->encode();
-                Storage::disk('gcs')->put("{$finalFrontFileName}", $imageData);
+                Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
 
                 $image = new Imagick();
-                $image->readImageBlob(Storage::disk('gcs')->get("{$finalFrontFileName}"));
+                $image->readImageBlob(Storage::disk('gcs')->get("{$newQRFolder}/{$finalFrontFileName}"));
                 $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
                 $image->setImageResolution(300, 300);
                 $imageData = $image->getImageBlob();
 
-                Storage::disk('gcs')->put("{$finalFrontFileName}", $imageData);
+                Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
             }
         }
 
@@ -150,7 +150,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                         $image->writeImage($finalQRCode);
                     }else{
                         $qrCode = Image::make(Storage::disk('gcs')->publicUrl("{$qr_code_file}")); //qr-code
-                        $back->insert($qrCode, 'top-right', 106, 104);
+                        $back->insert($qrCode, 'top-left', 110, 100);
 
                         $imageData = $back->encode();
                         Storage::disk('gcs')->put("{$imagePath}", $imageData);
