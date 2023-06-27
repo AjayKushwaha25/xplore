@@ -176,22 +176,19 @@ p {
 }
 
 .loginbg {
-    background-image: url("../images/login.png");
+    background-image:  url("../images/Banner_video.gif");
 }
 
 .search_historybg {
-    background-image: url("../images/login.png");
+    background-image:  url("../images/Banner_video.gif");
 }
 
 .signupbg {
-    background-image: url("../images/coupon_code.jpg");
+    background-image: url("../images/Banner_video.gif");
 }
 
 .couponCodebg {
     background-image: url("../images/Banner_video.gif");
-}
-.couponRewardbg{
-    background-image:  url("../images/confetti.gif"), url("../images/Banner_video.gif");
 }
 .rewardbg {
     background-image:  url("../images/confetti.gif"), url("../images/Banner_video.gif");
