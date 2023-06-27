@@ -48,7 +48,7 @@
                 @enderror
             </div>
             <div class="mb-2">
-                <input type="number" class="form-input @error('coupon_code') is-invalid @enderror" value="{{ old('coupon_code') }}" id="couponcode" placeholder="Enter coupon code" name="coupon_code" required>
+                <input type="number" class="form-input @error('coupon_code') is-invalid @enderror" value="{{ old('coupon_code') }}" id="couponcode" placeholder="Enter coupon code" min="0001" max="5500" name="coupon_code" required>
                 @error('coupon_code')
                 <div class="invalid-feedback">
                     {{ $message }}
