@@ -49,7 +49,7 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('admin.lpretailer_index') }}" key="t-view-user">View LP Retailer</a></li>
-                        <li><a href="{{ route('admin.lpretailer_histories') }}" key="t-view-user">LP Login History</a></li>
+                        <li><a href="{{ route('admin.lpretailer_histories_index') }}" key="t-view-user">LP Login History</a></li>
                     </ul>
                 </li>
                 @if(Auth::user()->roles->first()->slug == 'super_admin')

@@ -1,6 +1,6 @@
 @extends('admin.main')
 
-@section('title', 'View Retailer')
+@section('title', 'View LP Retailer')
 
 @section('style')
     <!-- data table -->
@@ -41,21 +41,7 @@
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                @forelse($data['lp_retailer'] as $lp_retailer)
 
-                         
-                            <tr>
-                                <td> {{ $lp_retailer->name }}</td>
-                                <td> {{ $lp_retailer->mobile_number }}</td>
-                                <td> {{ $lp_retailer->whatsapp_number }}</td>
-                                <td> {{ $lp_retailer->upi_id }}</td>
-                                <td> {{ $lp_retailer->created_at }}</td>
-                                <td><center><i class="fas fa-eye"></i></center></td>
-                   
-                            </tr>
-                                @empty
-                                <i>No Records found</i>
-                                @endforelse
                             </table>
 
                         </div>
@@ -75,7 +61,7 @@
 <script src="{{ asset('admin/js/responsive.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('admin/js/dataTables.fixedHeader.min.js') }}"></script>
 {{-- <script src="{{ asset('admin/js/datatables.init.js') }}"></script> --}}
-<!-- <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function(){
         id = 0
         $('#datatable').DataTable({
@@ -93,7 +79,7 @@
             stateSave: true,
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.retailer_lists', ['filter-by-date'=>request()->get('filter-by-date')]) }}",
+            ajax: "{{ route('admin.lpretailer_lists') }}",
             columns: [
                 { data: 'name', name: 'name' },
                 { data: 'mobile_number', name: 'mobile_number' },
@@ -122,5 +108,5 @@
         }),
         $(".dataTables_length select").addClass("form-select form-select-sm");
     });
-</script> -->
+</script>
 @endsection

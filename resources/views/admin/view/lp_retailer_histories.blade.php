@@ -1,6 +1,6 @@
 @extends('admin.main')
 
-@section('title', 'View Retailer')
+@section('title', 'View LP Retailer History')
 
 @section('style')
     <!-- data table -->
@@ -33,24 +33,14 @@
                             <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                                 <thead>
                                     <tr>
-                                        <th>Lp retailer id</th>
-                                        <th>coupon code id</th>                                    
+                                        <th>Retailer name</th>
+                                        <th>Coupon code</th>   
+                                        <th>Reward Value</th>                                    
                                         <th>Created At</th>
                                         <!-- <th>Action</th> -->
                                     </tr>
                                 </thead>
-                                @forelse($data['lp_retailer_history'] as $lp_retailer_history)
-
-                         
-                            <tr>
-                                <td> {{ $lp_retailer_history->lp_retailer_id }}</td>
-                                <td> {{ $lp_retailer_history->coupon_code_id }}</td>
-                                <td> {{ $lp_retailer_history->created_at }}</td>
-                               
-                            </tr>
-                                @empty
-                                <i>No Records found</i>
-                                @endforelse
+                                
                             </table>
 
                         </div>
@@ -70,17 +60,12 @@
 <script src="{{ asset('admin/js/responsive.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('admin/js/dataTables.fixedHeader.min.js') }}"></script>
 {{-- <script src="{{ asset('admin/js/datatables.init.js') }}"></script> --}}
-<!-- <script type="text/javascript">
+<script type="text/javascript">
     $(document).ready(function(){
-        id = 0
+        // id = 0
         $('#datatable').DataTable({
             responsive: true,
-            columnDefs: [ {
-                className: 'dtr-control',
-                orderable: false,
-                targets:   -1
-            } ],
-            order: [ 2, 'desc' ],
+            order: [ 3, 'desc' ],
             fixedHeader:{
                 headerOffset: $('#page-topbar').outerHeight(),
                 header: true
@@ -88,12 +73,11 @@
             stateSave: true,
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.retailer_lists', ['filter-by-date'=>request()->get('filter-by-date')]) }}",
+            ajax: "{{ route('admin.lpretailer_history_list') }}",
             columns: [
-                { data: 'name', name: 'name' },
-                { data: 'mobile_number', name: 'mobile_number' },
-                { data: 'whatsapp_number', name: 'whatsapp_number' },
-                { data: 'upi_id', name: 'upi_id' },
+                { data: 'lp_retailer.name', name: 'lpRetailer.name'},
+                { data: 'coupon_code.code', name: 'couponCode.code'},
+                { data: 'coupon_code.reward_item.value', name: 'couponCode.rewardItem.value'},
                 { data: 'created_at', name: 'created_at' ,
                     render : function(data, type, row) {
                         var d = new Date(row.created_at);
@@ -102,7 +86,7 @@
                         return d.getFullYear() + '-' + month + '-' + day + ' ' + d.toTimeString().split(' ')[0];
                     }
                 },
-                { data: 'id',
+                /*{ data: 'id',
                     render : function(data, type, row) {
                         editURL = '{{ route('admin.retailers.edit',['retailer' => ':retailerID']) }}'.replace(':retailerID', row.id);
                         urlEdit = '<a href="'+editURL+'" class="mr-3 text-info" data-toggle="tooltip" data-placement="top" title="Edit" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>'
@@ -112,10 +96,10 @@
 
                         return urlEdit+urlView;
                     }
-                },
+                },*/
             ]
         }),
         $(".dataTables_length select").addClass("form-select form-select-sm");
     });
-</script> -->
+</script>
 @endsection
