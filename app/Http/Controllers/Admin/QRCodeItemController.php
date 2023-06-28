@@ -10,6 +10,7 @@ use App\Imports\{QRCodeImport,BulkQRCodeImport};
 use Maatwebsite\Excel\Facades\Excel;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\GenerateQRCodeJob;
 
 class QRCodeItemController extends Controller
 {
@@ -166,30 +167,20 @@ class QRCodeItemController extends Controller
     }
 
 
-    // public function updateKey(Request $request)
-    // {
-    //     $key = $request->key;
-    //     $serial_number = $request->serial_number;
-    //     $qrcodeData = QRCodeItem::whereSerialNumber($serial_number)->first();
-    //     if(!$qrcodeData){
-    //         return back()->with('failed','Invalid Serial Number.');
-    //     }
+    public function generateBulkQRCode()
+    {
+        $qrCodeItems = QRCodeItem::with('rewardItem:id,value')
+                    ->select('url','path','serial_number','reward_item_id')
+                    ->get();
+        $chunkSize = 50;
 
-    //     $qrcodeData->update([
-    //         'key' => $key,
-    //     ]);
-    //     preg_match('/(\d+)$/', $serial_number, $matches);
-    //     $number = (int)$matches[1];
+        $chunks = collect($qrCodeItems)->chunk($chunkSize);
 
-    //     // Increment the number and update the value
-    //     $newKey = preg_replace_callback('/\d+$/', function($matches) {
-    //         return ++$matches[0];
-    //     }, $serial_number);
-    //     // dd($serial_number, $newKey);
-    //     session(['sr_no' => $newKey]);
-    //     // dd($qrcodeData);
-    //     return redirect()->route('login',['uid' => $qrcodeData->id]);
-    //     // return back()->with('success','Update successfully.');
-    // }
+        $chunks->each(function ($chunk) use ($chunkSize) {
+            GenerateQRCodeJob::dispatch($chunk)->delay(now()->addSeconds(10+$chunkSize));
+        });
+
+        return back()->with('qrcode-generation-success', 'Printable file will be generated shortly.');
+    }
     
 }

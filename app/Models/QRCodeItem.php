@@ -12,9 +12,7 @@ class QRCodeItem extends Model
 
     protected $fillable = [
         'url',
-        // 'key',
         'path',
-        // 'wd_id',
         'serial_number',
         'reward_item_id',
         'is_redeemed',

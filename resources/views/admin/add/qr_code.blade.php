@@ -115,82 +115,14 @@ $publicPath = public_path($path);
                         </form>
                     </div>
                 </div>
-            </div>
 
-            <!-- <div class="row">
                 <div class="col-md-12">
-                    <div class="row">
-                        <form action="{{ route('admin.qr-codes.bulk-update') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="col-md-8">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title mb-3">Update key</h4>
-                                        @if (\Session::has('success'))
-                                        <div class="mb-3">
-                                            <div class="alert alert-success">
-                                                <p style="margin-bottom: 0;">{!! \Session::get('success') !!}</p>
-                                            </div>
-                                        </div>
-                                        @endif
-                                        @if (\Session::has('message'))
-                                        <div class="mb-3">
-                                            <div class="alert alert-danger">
-                                                <p style="margin-bottom: 0;">{!! \Session::get('message') !!}</p>
-                                            </div>
-                                        </div>
-                                        @endif
-                                        @if ($message = Session::get('upload-success'))
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                        @endif
-                                        @if ($message = Session::get('upload-empty'))
-                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                        @endif
-
-                                        @error('file')
-                                        <div class="mb-3">
-                                            <div class="alert alert-danger">
-                                                <p style="margin-bottom: 0;">{{ $message }}</p>
-                                            </div>
-                                        </div>
-                                        @enderror
-                                        @if ($messages = Session::get('upload-failed'))
-                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                            <ol>
-                                                @foreach($messages['errors'] as $error)
-                                                <li>At row {{ $messages['rows'] }}, {{ $error }}</li>
-                                                @endforeach
-                                            </ol>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                        @endif
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="mb-3 row">
-                                                    <label for="formFile" class="col-md-2 col-form-label">Upload File</label>
-                                                    <div class="col-md-10">
-                                                        <input class="form-control" type="file" name="file" required>
-                                                        <small>Download a <a href="{{ asset('sample_csv/qr_code_sample_csv.csv') }}">sample CSV template</a> to see an example of the format required.</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <button style="z-index: 9;margin-right: 20px;margin-bottom: 20px;"  class="btn btn-success waves-effect waves-light">Generate Bulk QR Code</button>
-                            </div>
-                        </form>
-                    </div>
+                    <form action="{{ route('admin.qr-codes.generate-qrcode') }}" method="POST">
+                        @csrf
+                        <input type="submit" name="submit" value="Generate QR Code">
+                    </form>
                 </div>
-            </div> -->
+            </div>
         </div>
         <!-- End Page-content -->
     </div>
