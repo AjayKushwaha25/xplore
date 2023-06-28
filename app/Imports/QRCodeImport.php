@@ -37,104 +37,69 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         $todaysDate = now()->format('d-m-Y');
         // $batch
         $newQRFolder = "coupons/{$todaysDate}";
-        if(!Storage::disk('public')->exists($newQRFolder)) {
-            Storage::disk('public')->makeDirectory($newQRFolder, 0777, true); //creates directory
-        }
-        $finalFront = storage_path("app/public/{$newQRFolder}/front.png");
 
-        if(!Storage::disk('public')->exists($finalFront)){
+        if(!storage_disk()->exists($newQRFolder)) {
+            storage_disk()->makeDirectory($newQRFolder, 0777, true); //creates directory
+        }
+
+        // $finalFront = storage_path("app/public/{$newQRFolder}/front.png");
+        $finalFrontFileName = "front.png";
+        if(config('app.env')=='local'){
+            $finalFront = Storage::disk('public')->path("{$newQRFolder}/{$finalFrontFileName}");
+        }else{
+            $finalFront = Storage::disk('gcs')->publicUrl("{$newQRFolder}/{$finalFrontFileName}");
+        }
+
+        if(!storage_disk()->exists($finalFront)){
             $front = Image::make(public_path('images/coupon_template/front.png'));
-            $imgSave = $front->save($finalFront);
 
-            $image = new Imagick($finalFront);
-            $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-            $image->setImageResolution(300, 300);
-            $image->writeImage($finalFront);
+            if(config('app.env')=='local'){
+                $front->save($finalFront);
+                $image = new Imagick($finalFront);
+                $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                $image->setImageResolution(300, 300);
+                $image->writeImage($finalFront);
+            }else{
+                $imageData = $front->encode();
+                Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
+
+                $image = new Imagick();
+                $image->readImageBlob(Storage::disk('gcs')->get("{$newQRFolder}/{$finalFrontFileName}"));
+                $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                $image->setImageResolution(300, 300);
+                $imageData = $image->getImageBlob();
+
+                Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
+            }
         }
+
         foreach ($rows as $key => $row)
         {
             try {
-                $rewardValue = $row[1];
                 $rewardId = RewardItem::whereValue($row[1])->value('id');
 
-                // $uniqueKey = Str::random(5);
+                // final coupon path
+                $qrCodeRewardAmt = "{$newQRFolder}/{$row[1]}";
 
-                // while (QRCodeItem::where('key', $uniqueKey)->exists()) {
-                //     $uniqueKey = Str::random(5);
-                // }
+                if(!storage_disk()->exists($qrCodeRewardAmt)) {
+                    storage_disk()->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
+                }
+
+                $imagePath = "{$qrCodeRewardAmt}/{$row[0]}.png";
 
                 $qrCodeItem = QRCodeItem::updateOrCreate([
                     'serial_number' => $row[0],
                 ],[
-                    // 'key' => $uniqueKey,
                     'reward_item_id' => $rewardId,
+                    'path' => $imagePath,
                 ]);
 
-                // $noofPack = $this->noofPackByRewardValue($rewardValue);
+                $url = url('/')."/login/?uid={$qrCodeItem->id}";
 
-                // final coupon path
-                $qrCodeRewardAmt = "{$newQRFolder}/{$row[1]}";
-                if(!Storage::disk('public')->exists($qrCodeRewardAmt)) {
-                    Storage::disk('public')->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
-                }
-                $imagePath = "{$qrCodeRewardAmt}/{$row[0]}.png";
-                if(!Storage::disk('public')->exists($imagePath)){
-                    $url = url('/')."/login/?uid={$qrCodeItem->id}";
-                    // $couponUniqueURL = url('/')."?k={$qrCodeItem->key}";
+                $qrCodeItem->update([
+                    'url' => $url,
+                ]);
 
-                    $qr_code_file = "qr-code/{$row[0]}.png";
-                    $image = QrCode::format('png')
-                            ->size(550)->errorCorrection('H')
-                            ->generate($url);
-
-                    $storeQrCode = Storage::disk('public')->put($qr_code_file, $image);
-                    $image = new Imagick(storage_path("app/public/{$qr_code_file}"));
-                    $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-                    $image->setImageResolution(300, 300);
-                    $image->writeImage(storage_path("app/public/{$qr_code_file}"));
-
-                    $back = Image::make(public_path('images/coupon_template/back.png'));
-
-                    // $back->text($noofPack, 370, 170, function($font) {
-                    //     $font->file(public_path('fonts/Poppins-Bold.ttf'));
-                    //     $font->size(100);
-                    //     $font->color('#2C3689');
-                    //     $font->align('center');
-                    //     $font->valign('bottom');
-                    // });
-
-                    $back->text($rewardValue, 1610, 600, function($font) {
-                        $font->file(public_path('fonts/Poppins-Bold.ttf'));
-                        $font->size(150);
-                        $font->color('#2C3689');
-                        $font->align('right');
-                        $font->valign('bottom');
-                    });
-
-                    $back->text($row[0], 500, 700, function($font) {
-                        $font->file(public_path('fonts/Poppins-Bold.ttf'));
-                        $font->size(26);
-                        $font->color('#2C3689');
-                        $font->align('left');
-                        $font->valign('bottom');
-                    });
-                    $qrCode = Image::make(storage_path("app/public/{$qr_code_file}"));
-                    $back->insert($qrCode, 'top-left', 110, 100);
-
-                    $finalQRCode = storage_path("app/public/{$imagePath}");
-                    $imgSave = $back->save($finalQRCode);
-
-                    $image = new Imagick($finalQRCode);
-                    $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-                    $image->setImageResolution(300, 300);
-                    $image->writeImage($finalQRCode);
-                    // dd($image);
-
-                    $qrCodeItem->update([
-                        'url' => $url,
-                        'path' => $imagePath,
-                    ]);
-                }
             } catch (ValidationException $e) {
                 $this->failed($e);
             } catch (\Exception $e) {
@@ -199,20 +164,4 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         return 200;
     }
 
-    // public function noofPackByRewardValue($rewardValue){
-    //     switch ($rewardValue) {
-    //         case '50':
-    //             return 2;
-    //             break;
-    //         case '100':
-    //             return 2;
-    //             break;
-    //         case '200':
-    //             return 2;
-    //             break;
-    //         default:
-    //             return 0;
-    //             break;
-    //     }
-    // }
 }

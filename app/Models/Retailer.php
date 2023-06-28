@@ -16,6 +16,5 @@ class Retailer extends Authenticatable
         'mobile_number',
         'whatsapp_number',
         'upi_id',
-        'coupon_code',
     ];
 }
