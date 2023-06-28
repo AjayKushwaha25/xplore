@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreLpRetailerRequest;
 use App\Http\Requests\UpdateLpRetailerRequest;
+use DataTables;
 
 use App\Models\{ CouponCode, Retailer, RewardItem, LpRetailer,CouponCodeHistory };
 
@@ -17,15 +18,12 @@ class LpRetailerController extends Controller
      */
     public function index()
     {
-        $lp_retailer = LpRetailer::all();
-        // dd($lp_retailer);
-        $data = [
-            'lp_retailer' =>  $lp_retailer,
-        ];
-        return view('admin.view.lp_retailer', compact('data'));
+        return view('admin.view.lp_retailer');
+    }
 
-
-
+    public function lpRetailersList(){
+        $lp_retailers = LpRetailer::query();
+        return Datatables::of($lp_retailers)->make(true);
     }
 
     /**
@@ -143,11 +141,20 @@ class LpRetailerController extends Controller
     }
 
     public function viewLoginHistory(){
-        $lpretailer_history = CouponCodeHistory::all();
-        // dd($lpretailer_history);
-        $data = [
-            'lp_retailer_history' =>  $lpretailer_history,
-        ];
-        return view('admin.view.lp_retailer_histories', compact('data'));
+        return view('admin.view.lp_retailer_histories');
+    }
+
+    public function lpRetailerHistoryLists(){
+        $loginHistories = CouponCodeHistory::with([
+            'lpRetailer:id,name',
+            'couponCode:id,code,reward_item_id',
+            'couponCode.rewardItem:id,value'
+        ])
+        ->select('lp_retailer_id','coupon_code_id','coupon_code_histories.created_at');
+
+
+        // dd($loginHistories->get());
+        return Datatables::of($loginHistories)->make(true);
+
     }
 }
