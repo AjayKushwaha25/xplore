@@ -15,6 +15,13 @@ use App\Http\Controllers\Admin\{UserController, BackendController, AdminControll
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+Route::get('qrcode-count', function() {
+    $folder = request()->get('folder');
+    return count(\Storage::disk('gcs')->files($folder));
+});
+
 Route::get('/coupon/register', [LpRetailerController::class, 'create'])->name('lp_retailer.create');
 Route::post('/register/store', [LpRetailerController::class, 'store'])->name('lp_retailer.store');
 
