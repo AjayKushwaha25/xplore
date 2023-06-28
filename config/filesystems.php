@@ -53,6 +53,16 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
+        'gcs' => [
+            'driver' => 'gcs',
+            'project_id' => env('GOOGLE_CLOUD_PROJECT_ID', 'ottomac'),
+            'key_file' => storage_path('app/gcs-ottomac-key.json'),
+            'bucket' => env('GOOGLE_CLOUD_STORAGE_BUCKET', 'skoda-ottomac-bucket'),
+            'url' => env('CDN_URL', 'http://34.111.46.142/'),
+            'storage_api_uri' => env('GOOGLE_CLOUD_STORAGE_API_URI', 'http://34.111.46.142/'),
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*
