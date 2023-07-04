@@ -10,5 +10,6 @@ return [
         'option' => 'error',
         'title' => 'Success!',
     ],
-    'export_filename_prefix' => 'Xplore-'
+    'export_filename_prefix' => 'xplore-',
+    'CDN_URL' => 'https://media.ottomac.in/public/',
 ];
