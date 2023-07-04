@@ -11,5 +11,5 @@ return [
         'title' => 'Success!',
     ],
     'export_filename_prefix' => 'xplore-',
-    'CDN_URL' => 'https://media.ottomac.in/public/',
+    'CDN_URL' => 'https://media.ottomac.in/itc-xplore/',
 ];
