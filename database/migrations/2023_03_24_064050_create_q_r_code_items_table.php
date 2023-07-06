@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('url')->nullable();
             $table->string('path')->nullable();
             $table->string('serial_number')->unique();
+            $table->foreignUuid('wd_id')->references('id')->on('wd')->cascadeOnDelete();
             $table->foreignUuid('reward_item_id')->constrained()->cascadeOnDelete();
             $table->boolean('is_redeemed')->default(0);
             $table->boolean('status')->default(1);

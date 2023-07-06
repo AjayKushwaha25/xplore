@@ -28,6 +28,7 @@ class GenerateQRCodeJob implements ShouldQueue
     public function __construct(Collection $qrCodeItems)
     {
         $this->qrCodeItems = $qrCodeItems;
+
     }
 
     /**
@@ -42,7 +43,7 @@ class GenerateQRCodeJob implements ShouldQueue
                 $rewardValue = $qrCodeItem->rewardItem->value;
                 $qr_code_file = "qr-code/{$qrCodeItem->path}";
                 $qrCodeImage = QrCode::format('png')
-                        ->size(550)->errorCorrection('H')
+                        ->size(2000)->errorCorrection('H')
                         ->generate($qrCodeItem->url);
 
                 if(config('app.env')=='local'){
@@ -64,15 +65,15 @@ class GenerateQRCodeJob implements ShouldQueue
 
                 $back = Image::make(public_path('images/coupon_template/back.png'));
 
-                $back->text($rewardValue, 1340, 600, function($font) {
-                    $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
-                    $font->size(150);
-                    $font->color('#2C3689');
-                    $font->align('left');
-                    $font->valign('bottom');
-                });
+                // $back->text($rewardValue, 1340, 600, function($font) {
+                //     $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
+                //     $font->size(150);
+                //     $font->color('#2C3689');
+                //     $font->align('left');
+                //     $font->valign('bottom');
+                // });
 
-                $back->text($qrCodeItem->serial_number, 500, 700, function($font) {
+                $back->text($qrCodeItem->serial_number, 950, 1000, function($font) {
                     $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
                     $font->size(26);
                     $font->color('#2C3689');
