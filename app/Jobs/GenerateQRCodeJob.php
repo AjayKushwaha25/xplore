@@ -43,7 +43,7 @@ class GenerateQRCodeJob implements ShouldQueue
                 $rewardValue = $qrCodeItem->rewardItem->value;
                 $qr_code_file = "qr-code/{$qrCodeItem->path}";
                 $qrCodeImage = QrCode::format('png')
-                        ->size(2000)->errorCorrection('H')
+                        ->size(550)->errorCorrection('H')
                         ->generate($qrCodeItem->url);
 
                 if(config('app.env')=='local'){
@@ -73,7 +73,7 @@ class GenerateQRCodeJob implements ShouldQueue
                 //     $font->valign('bottom');
                 // });
 
-                $back->text($qrCodeItem->serial_number, 950, 1000, function($font) {
+                $back->text($qrCodeItem->serial_number, 145, 720, function($font) {
                     $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
                     $font->size(26);
                     $font->color('#2C3689');
