@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Payout;
+use App\Models\{Payout,LoginHistory};
 use App\Imports\PayoutImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -124,5 +124,130 @@ class PayoutController extends Controller
 
     public function payoutImport()
     {
+    }
+
+    public function getPayoutCount(){
+   
+        $totalPayout = LoginHistory::with([
+            'qRCodeItem:id,reward_item_id',
+            'qRCodeItem.rewardItem:id,value'
+        ])->select('q_r_code_item_id')->get();
+        $totalPayoutAmount=0;
+        foreach ($totalPayout as $totalPayout) {
+            $totalPayoutAmount += $totalPayout->qRCodeItem->rewardItem->value;
+            }
+        
+        $status1 = 1;
+        $successPayout = Payout::with([
+        'loginHistory:id,q_r_code_item_id',
+        'qRCodeItem:id,reward_item_id',
+        'qRCodeItem.rewardItem:id,value'
+        ])->select('login_history_id')->where('status',$status1)->get();
+        
+        $successPayoutAmount = 0;
+        foreach ($successPayout as $successPayout) {
+            $successPayoutAmount += $successPayout->loginHistory->qRCodeItem->rewardItem->value;
+            }
+           
+        $status2 = 0;
+        $failedPayout = Payout::with([
+            'loginHistory:id,q_r_code_item_id',
+            'qRCodeItem:id,reward_item_id',
+            'qRCodeItem.rewardItem:id,value'
+        ])->select('login_history_id')->where('status',$status2)->get();
+    
+        $failedPayoutAmount = 0;
+        foreach ($failedPayout as $failedPayout) {
+            $failedPayoutAmount += $failedPayout->loginHistory->qRCodeItem->rewardItem->value;
+            }
+    
+        $status3 = 2;
+      
+        $pendingPayout = Payout::with([
+            'loginHistory:id,q_r_code_item_id',
+            'qRCodeItem:id,reward_item_id',
+            'qRCodeItem.rewardItem:id,value'
+        ])->select('login_history_id')->where('status',$status3)->get();
+
+        $pendingPayoutAmount = 0;
+        foreach ($pendingPayout as $pendingPayout) {
+            $pendingPayoutAmount += $pendingPayout->loginHistory->qRCodeItem->rewardItem->value;
+            }
+
+        $data = [
+            'totalPayoutAmount' => $totalPayoutAmount,
+            'successPayoutAmount' => $successPayoutAmount,
+            'failedPayoutAmount' => $failedPayoutAmount,
+            'pendingPayoutAmount' => $pendingPayoutAmount,
+        ];
+
+        return $data;
+ 
+    }
+
+    public function viewSuccessPayout()
+    {
+        // $payouts = Payout::get();
+        return view('admin.view.success-payout');
+    }
+
+    public function getSuccessPayout(){
+        $status=1;
+        $success_payouts = Payout::query()
+        ->with([
+            'loginHistory:id,q_r_code_item_id,retailer_id',
+            'loginHistory.retailer:id,name,mobile_number',
+            'loginHistory.qRCodeItem:id,serial_number,reward_item_id',
+            'loginHistory.qRCodeItem.rewardItem:id,value',
+            // 'loginHistory.qRCodeItem.wd:id,code'
+        ])
+        ->select('id','login_history_id','utr','status','reason','processed_at')
+        ->where('status',$status)
+        ->get();
+            // dd($success_payouts);
+        return Datatables::of($success_payouts)->make(true);
+    }
+
+
+    public function viewFailedPayout()
+    {
+        return view('admin.view.failed-payout');
+    }
+    public function getFailedPayout(){
+        $status=0;
+        $failed_payouts = Payout::query()
+        ->with([
+            'loginHistory:id,q_r_code_item_id,retailer_id',
+            'loginHistory.retailer:id,name,mobile_number',
+            'loginHistory.qRCodeItem:id,serial_number,reward_item_id',
+            'loginHistory.qRCodeItem.rewardItem:id,value',
+            // 'loginHistory.qRCodeItem.wd:id,code'
+        ])
+        ->select('id','login_history_id','utr','status','reason','processed_at')
+        ->where('status',$status)
+        ->get();
+            // dd($success_payouts);
+        return Datatables::of($failed_payouts)->make(true);
+    }
+
+    public function viewPendingPayout()
+    {
+        return view('admin.view.pending-payout');
+    }
+    public function getPendingPayout(){
+        $status=2;
+        $pending_payouts = Payout::query()
+        ->with([
+            'loginHistory:id,q_r_code_item_id,retailer_id',
+            'loginHistory.retailer:id,name,mobile_number',
+            'loginHistory.qRCodeItem:id,serial_number,reward_item_id',
+            'loginHistory.qRCodeItem.rewardItem:id,value',
+            // 'loginHistory.qRCodeItem.wd:id,code'
+        ])
+        ->select('id','login_history_id','utr','status','reason','processed_at')
+        ->where('status',$status)
+        ->get();
+            // dd($pending_payouts);
+        return Datatables::of($pending_payouts)->make(true);
     }
 }

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\{UserController, BackendController, AdminControll
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::get('/coupon/register', [LpRetailerController::class, 'create'])->name('lp_retailer.create');
 Route::post('/register/store', [LpRetailerController::class, 'store'])->name('lp_retailer.store');
 
@@ -92,6 +93,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('payoutsList', [PayoutController::class, 'payoutsList'])->name('payout_lists');
         Route::post('bulk-payout-upload', [PayoutController::class, 'bulkUpload'])->name('bulk_payout_upload');
         Route::resource('payouts', PayoutController::class);
+        Route::get('payouts-count', [PayoutController::class, 'getPayoutCount'])->name('payout_count');
+        Route::get('view-success-payout', [PayoutController::class, 'viewSuccessPayout'])->name('view_success_payout');
+        Route::get('success-payout', [PayoutController::class, 'getSuccessPayout'])->name('success_payout');
+        Route::get('view-failed-payout', [PayoutController::class, 'viewFailedPayout'])->name('view_failed_payout');
+        Route::get('failed-payout', [PayoutController::class, 'getFailedPayout'])->name('failed_payout');
+        Route::get('view-pending-payout', [PayoutController::class, 'viewPendingPayout'])->name('view_pending_payout');
+        Route::get('pending-payout', [PayoutController::class, 'getPendingPayout'])->name('pending_payout');
+       
 
 
         /* Retailer */
