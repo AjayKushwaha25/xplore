@@ -16,10 +16,13 @@ class QRCodeItem extends Model
         'serial_number',
         'reward_item_id',
         'is_redeemed',
+        'wd_id',
         'status',
     ];
 
-
+    public function wd() {
+        return $this->belongsTo(WD::class);
+    }
     
     public function rewardItem() {
         return $this->belongsTo(RewardItem::class);

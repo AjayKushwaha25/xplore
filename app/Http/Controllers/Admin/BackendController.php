@@ -141,11 +141,11 @@ class BackendController extends Controller
         $zip->close();
         return true;
     }
-    private function createFolder($folder){
+    private function createFolder($folder,$wdCode){
         $srNo = 1;
         $publicPath = '';
         if(File::exists(public_path($folder))){
-            while(File::exists(public_path('images/qr-code-final/'.Carbon::now()->format('d-m-Y').'-'.$srNo))){
+            while(File::exists(public_path('images/qr-code-final/'.Carbon::now()->format('d-m-Y').'-'.$srNo.'/'.$wdCode))){
                 $srNo++;
             }
         }else{

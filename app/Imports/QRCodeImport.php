@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use Throwable;
-use App\Models\{QRCodeItem, RewardItem, User};
+use App\Models\{WD,QRCodeItem, RewardItem, User};
 use Illuminate\Support\{Str, Collection};
 use Carbon\Carbon;
 use App\Notifications\ImportHasFailedNotification;
@@ -76,21 +76,29 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         foreach ($rows as $key => $row)
         {
             try {
-                $rewardId = RewardItem::whereValue($row[1])->value('id');
+                $rewardId = RewardItem::whereValue($row[4])->value('id');
+
+                $wd = WD::updateOrCreate([
+                    'code' => $row[0],
+                ],[
+                    'firm_name' => $row[1],
+                    'section_code' => $row[2],
+                ]);
 
                 // final coupon path
-                $qrCodeRewardAmt = "{$newQRFolder}/{$row[1]}";
+                $qrCodeRewardAmt = "{$newQRFolder}/{$row[4]}";
 
                 if(!storage_disk()->exists($qrCodeRewardAmt)) {
                     storage_disk()->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
                 }
 
-                $imagePath = "{$qrCodeRewardAmt}/{$row[0]}.png";
+                $imagePath = "{$qrCodeRewardAmt}/{$row[4]}.png";
 
                 $qrCodeItem = QRCodeItem::updateOrCreate([
-                    'serial_number' => $row[0],
+                    'serial_number' => $row[3],
                 ],[
                     'reward_item_id' => $rewardId,
+                    'wd_id' => $wd->id,
                     'path' => $imagePath,
                 ]);
 
@@ -115,14 +123,20 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
     {
         return [
             '*.0' => ['required'],
-            '*.1' => ['required','numeric'],
+            '*.1' => ['required'],
+            '*.2' => ['sometimes'],
+            '*.3' => ['required'],
+            '*.4' => ['required','numeric'],
         ];
     }
     public function customValidationAttributes()
     {
         return [
-            '0' => 'Serial Number',
-            '1' => 'Amount',
+            '0' => 'WD Code',
+            '1' => 'WD Firm Name',
+            '2' => 'Section Code',
+            '3' => 'Serial Number',
+            '4' => 'Amount',
         ];
     }
 

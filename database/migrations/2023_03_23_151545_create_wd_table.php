@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('q_r_code_items', function (Blueprint $table) {
+        Schema::create('wd', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('url')->nullable();
-            $table->string('path')->nullable();
-            $table->string('serial_number')->unique();
-            $table->foreignUuid('wd_id')->references('id')->on('wd')->cascadeOnDelete();
-            $table->foreignUuid('reward_item_id')->constrained()->cascadeOnDelete();
-            $table->boolean('is_redeemed')->default(0);
+            $table->string('code')->unique();
+            $table->string('firm_name');
+            $table->string('section_code')->nullable();
             $table->boolean('status')->default(1);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('q_r_code_items');
+        Schema::dropIfExists('wd');
     }
 };

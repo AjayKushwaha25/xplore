@@ -41,6 +41,9 @@ class AdminController extends Controller
             ->take(10);
 
         $scannedHistories = $loginHistories->take(10);
+            
+        $payout_count = new PayoutController;
+        $result = $payout_count->getPayoutCount();
 
         $data = [
             'counts' => NavHelper::getCounts(),
@@ -49,7 +52,7 @@ class AdminController extends Controller
             'topScannedUsers' => $topScannedUsers,
         ];
 
-        return view('admin.index', compact('data'));
+        return view('admin.index', compact('data','result'));
     }
 
 

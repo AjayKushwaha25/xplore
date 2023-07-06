@@ -195,6 +195,103 @@
                         </div>
                     </a>
                 </div>
+
+                <div class="col-md-3">
+                    <a href="{{ route('admin.login-histories') }}">
+                        <div class="card mini-stats-wid">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <p class="text-muted fw-medium mb-1">Total Payouts</p>
+                                        <h5 class="mb-0" id="total_payout">{{$result['totalPayoutAmount']}}</h5>
+
+                                    </div>
+
+                                    <div class="flex-shrink-0 align-self-center">
+                                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                                            <span class="avatar-title">
+                                                <i class="fas fa-user-friends font-size-18"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a href="{{ route('admin.view_success_payout') }}">
+                        <div class="card mini-stats-wid">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <p class="text-muted fw-medium mb-1">Success Payout</p>
+                                        <h5 class="mb-0" id="success_payout">{{$result['successPayoutAmount']}}</h5>
+
+                                    </div>
+
+                                    <div class="flex-shrink-0 align-self-center">
+                                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                                            <span class="avatar-title">
+                                                <i class="fas fa-user-friends font-size-18"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="col-md-3">
+                    <a href="{{ route('admin.view_pending_payout') }}">
+                        <div class="card mini-stats-wid">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <p class="text-muted fw-medium mb-1">Pending Payout</p>
+                                        <h5 class="mb-0" id="pending_payout">{{$result['pendingPayoutAmount']}}</h5>
+
+                                    </div>
+
+                                    <div class="flex-shrink-0 align-self-center">
+                                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                                            <span class="avatar-title">
+                                                <i class="fas fa-user-friends font-size-18"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-3">
+                    <a href="{{ route('admin.view_failed_payout') }}">
+                        <div class="card mini-stats-wid">
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <p class="text-muted fw-medium mb-1">Failed Payouts</p>
+                                        <h5 class="mb-0" id="failed_payouts">{{$result['failedPayoutAmount']}}</h5>
+
+                                    </div>
+
+                                    <div class="flex-shrink-0 align-self-center">
+                                        <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
+                                            <span class="avatar-title">
+                                                <i class="fas fa-user-friends font-size-18"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
             </div>
             <div class="row">
                 <div class="col-md-7">
