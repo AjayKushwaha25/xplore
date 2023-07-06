@@ -30,7 +30,6 @@
                         <div class="page-title-right">
                             <!-- Example split danger button -->
                             <div class="btn-group">
-                                {{-- <button type="button" class="btn btn-primary addOutlet">Gen</button> --}}
                                 <a href="{{ route('admin.qr-codes.create') }}" class="btn btn-primary">Generate QR Code</a>
                             </div>
                         </div>
@@ -128,7 +127,7 @@
                 },
                 { data: 'path', name: 'path' ,
                     render : function(data, type, row) {
-                        var imgURL = "{{ \Storage::disk('public')->url(':filename') }}".replace(':filename', row.path);
+                        var imgURL = "{{ config('app.env')=='local' ? asset('storage/:filename') : config('constants.CDN_URL').storage_disk()->path(':filename') }}".replace(':filename', row.path);
                         return '<a href="'+imgURL+'" target="_blank">View Coupon</a>';
                     }
                 },

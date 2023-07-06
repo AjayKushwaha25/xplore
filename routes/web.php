@@ -16,6 +16,12 @@ use App\Http\Controllers\Admin\{UserController, BackendController, AdminControll
 |
 */
 
+
+Route::get('qrcode-count', function() {
+    $folder = request()->get('folder');
+    return count(\Storage::disk('gcs')->files($folder));
+});
+
 Route::get('/coupon/register', [LpRetailerController::class, 'create'])->name('lp_retailer.create');
 Route::post('/register/store', [LpRetailerController::class, 'store'])->name('lp_retailer.store');
 
