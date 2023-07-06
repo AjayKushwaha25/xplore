@@ -1,6 +1,6 @@
 @extends('admin.main')
 
-@section('title', "{$retailer->name}'s Details")
+@section('title', "{$qr_code->serial_number}'s Details")
 
 @section('style')
     <!-- data table -->
@@ -32,33 +32,33 @@
                         <div class="card-body">
                             <h4 class="card-title mb-4">
                                 @yield('title')
-                                {{-- <a href="{{ URL::to('admin/edit-ds', [$data['dsLists'][0]->uuid]) }}">
+                                <a href="{{ route('admin.qr-codes.edit', $qr_code->id) }}">
                                     <i class="mdi mdi-square-edit-outline font-size-18"></i>
-                                </a> --}}
+                                </a>
                             </h4>
                             <div class="table-responsive">
                                 <table class="table table-nowrap mb-0">
                                     <tbody>
                                         <tr>
                                             <th scope="row">Name :</th>
-                                            <td>{{ $retailer->name }}</td>
+                                            <td>{{ $qr_code->name }}</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Mobile Number :</th>
-                                            <td>{{ $retailer->mobile_number }}</td>
+                                            <td>{{ $qr_code->mobile_number }}</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Whatsapp Number :</th>
-                                            <td>{{ $retailer->whatsapp_number }}</td>
+                                            <td>{{ $qr_code->whatsapp_number }}</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">UPI ID :</th>
-                                            <td>{{ $retailer->upi_id }}</td>
+                                            <td>{{ $qr_code->upi_id }}</td>
                                         </tr>
                                         <tr>
                                             <th scope="row">Registered At :</th>
-                                            {{-- <td>{{ $retailer->created_at->diffForHumans() }}</td> --}}
-                                            <td>{{ $retailer->created_at->format('j F Y h:s:i A') }}</td>
+                                            {{-- <td>{{ $qr_code->created_at->diffForHumans() }}</td> --}}
+                                            <td>{{ $qr_code->created_at->format('j F Y h:s:i A') }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

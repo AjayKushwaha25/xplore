@@ -36,7 +36,7 @@ class QRCodeItemController extends Controller
                                         $query->select('id','value');
                                     });
                                 })
-                                ->with(['rewardItem:id,value']);
+                                ->with(['rewardItem:id,value','wd:id,code']);
 
         return Datatables::of($qrCodeItems)->make(true);
     }
@@ -182,5 +182,5 @@ class QRCodeItemController extends Controller
 
         return back()->with('qrcode-generation-success', 'Printable file will be generated shortly.');
     }
-    
+
 }
