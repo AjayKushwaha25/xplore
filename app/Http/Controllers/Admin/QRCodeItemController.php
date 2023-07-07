@@ -36,7 +36,7 @@ class QRCodeItemController extends Controller
                                         $query->select('id','value');
                                     });
                                 })
-                                ->with(['rewardItem:id,value','wd:id,code']);
+                                ->with(['rewardItem:id,value']);
 
         return Datatables::of($qrCodeItems)->make(true);
     }
@@ -88,14 +88,11 @@ class QRCodeItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(QRCodeItem $qr_code)
     {
-        $qrCodeItem = QRCodeItem::with([
-                                            'rewardItem:id,value'
-                                        ])
-                                        ->whereId($id)
-                                        ->get();
-        return view('admin.view-by-id.qr_code', compact('qrCodeItem'));
+        $qr_code->load('rewardItem:id,value');
+
+        return view('admin.view-by-id.qr_code', compact('qr_code'));
     }
 
     /**
