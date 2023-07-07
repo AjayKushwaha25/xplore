@@ -78,8 +78,10 @@
 
             <div class="text-center mt-4">
                 <input type="hidden" name="uid" value="{{ $qrcodeId ?? '' }}">
+                <input type="hidden" name="serial_number" value="{{ $serialNumber ?? '' }}">
+                <input type="hidden" name="coupon_code" value="{{ $couponCode ?? '' }}">
                 <button type="submit" class="bg-color" @if($data['status'] == 'failed') disabled @endif>SIGN UP</button>
-                <p class="mt-1">Already have account? <a class="link" href="{{ route('login',['uid' => $qrcodeId ?? '']) }}"> LOGIN</a></p>
+                <p class="mt-1">Already have account? <a class="link" href="{{ route('login',['uid' => $qrcodeId ?? '','serial_number' => $serialNumber ?? '','coupon_code' => $couponCode ?? '']) }}"> LOGIN</a></p>
             </div>
         </form>
     </div>

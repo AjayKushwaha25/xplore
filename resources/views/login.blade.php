@@ -61,8 +61,10 @@
 
             <div class="text-center mt-4">
                 <input type="hidden" name="uid" value="{{ $qrcodeId ?? '' }}">
+                <input type="hidden" name="serial_number" value="{{ $serialNumber ?? '' }}">
+                <input type="hidden" name="coupon_code" value="{{ $couponCode ?? '' }}">
                 <button type="submit" class="bg-color" @if($data['status'] == 'failed') disabled @endif>Redeem Now</button>
-                <p class="mt-2">Don't have account? <a class="link" href="{{ route('sign_up',['uid' => $qrcodeId ?? '']) }}"> SIGN UP</a></p>
+                <p class="mt-2">Don't have account? <a class="link" href="{{ route('sign_up',['uid' => $qrcodeId ?? '','serial_number' => $serialNumber ?? '','coupon_code' => $couponCode ?? '']) }}"> SIGN UP</a></p>
             </div>
         </form>
     </div>

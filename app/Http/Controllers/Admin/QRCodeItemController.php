@@ -174,8 +174,7 @@ class QRCodeItemController extends Controller
         $chunks = collect($qrCodeItems)->chunk($chunkSize);
 
         $chunks->each(function ($chunk) use ($chunkSize) {
-            // GenerateQRCodeJob::dispatch($chunk)->delay(now()->addSeconds(10+$chunkSize));
-            GenerateQRCodeJob::dispatch($chunk);
+            GenerateQRCodeJob::dispatch($chunk)->delay(now()->addSeconds(10+$chunkSize));
         });
 
         return back()->with('qrcode-generation-success', 'Printable file will be generated shortly.');
