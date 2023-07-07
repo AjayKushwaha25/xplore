@@ -72,10 +72,11 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
             }
         }
-
+            
         foreach ($rows as $key => $row)
         {
             try {
+
                 $rewardId = RewardItem::whereValue($row[4])->value('id');
 
                 $wd = WD::updateOrCreate([
@@ -92,7 +93,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                     storage_disk()->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
                 }
 
-                $imagePath = "{$qrCodeRewardAmt}/{$row[4]}.png";
+                $imagePath = "{$qrCodeRewardAmt}/{$row[3]}.png";
 
                 $qrCodeItem = QRCodeItem::updateOrCreate([
                     'serial_number' => $row[3],
