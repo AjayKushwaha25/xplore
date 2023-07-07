@@ -14,6 +14,7 @@ class QRCodeItem extends Model
         'url',
         'path',
         'serial_number',
+        'coupon_code',
         'reward_item_id',
         'is_redeemed',
         'wd_id',

@@ -167,14 +167,15 @@ class QRCodeItemController extends Controller
     public function generateBulkQRCode()
     {
         $qrCodeItems = QRCodeItem::with('rewardItem:id,value')
-                    ->select('url','path','serial_number','reward_item_id')
+                    ->select('url','path','serial_number','reward_item_id','coupon_code')
                     ->get();
         $chunkSize = 50;
 
         $chunks = collect($qrCodeItems)->chunk($chunkSize);
 
         $chunks->each(function ($chunk) use ($chunkSize) {
-            GenerateQRCodeJob::dispatch($chunk)->delay(now()->addSeconds(10+$chunkSize));
+            // GenerateQRCodeJob::dispatch($chunk)->delay(now()->addSeconds(10+$chunkSize));
+            GenerateQRCodeJob::dispatch($chunk);
         });
 
         return back()->with('qrcode-generation-success', 'Printable file will be generated shortly.');

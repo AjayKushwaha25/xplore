@@ -1,182 +1,115 @@
 <?php
 
-namespace App\Imports;
+namespace App\Jobs;
 
-use Throwable;
-use App\Models\{WD,QRCodeItem, RewardItem, User};
-use Illuminate\Support\{Str, Collection};
-use Carbon\Carbon;
-use App\Notifications\ImportHasFailedNotification;
-use Maatwebsite\Excel\Concerns\{ToModel, ToCollection, Importable, SkipsErrors, SkipsFailures, SkipsOnError, SkipsOnFailure, WithStartRow, WithValidation, WithChunkReading, WithEvents};
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-// use Maatwebsite\Excel\Events\ImportFailed;
-use Illuminate\Support\Facades\{Auth, File};
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use App\Models\QRCodeItem;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use Imagick;
+use Imagick, Storage;
+use Illuminate\Support\Collection;
 
-class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithChunkReading, ShouldQueue, WithEvents
+class GenerateQRCodeJob implements ShouldQueue
 {
-    public $rowCount = 0;
-    public $importedBy;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(User $importedBy)
-    {
-        $this->importedBy = $importedBy;
-    }
+    protected $qrCodeItems;
 
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
-
-    public function collection(Collection $rows)
-    {
-        $todaysDate = now()->format('d-m-Y');
-        // $batch
-        $newQRFolder = "coupons/{$todaysDate}";
-
-        if(!storage_disk()->exists($newQRFolder)) {
-            storage_disk()->makeDirectory($newQRFolder, 0777, true); //creates directory
-        }
-
-        // $finalFront = storage_path("app/public/{$newQRFolder}/front.png");
-        $finalFrontFileName = "front.png";
-        if(config('app.env')=='local'){
-            $finalFront = Storage::disk('public')->path("{$newQRFolder}/{$finalFrontFileName}");
-        }else{
-            $finalFront = Storage::disk('gcs')->publicUrl("{$newQRFolder}/{$finalFrontFileName}");
-        }
-
-        if(!storage_disk()->exists($finalFront)){
-            $front = Image::make(public_path('images/coupon_template/front.png'));
-
-            if(config('app.env')=='local'){
-                $front->save($finalFront);
-                $image = new Imagick($finalFront);
-                $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-                $image->setImageResolution(300, 300);
-                $image->writeImage($finalFront);
-            }else{
-                $imageData = $front->encode();
-                Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
-
-                $image = new Imagick();
-                $image->readImageBlob(Storage::disk('gcs')->get("{$newQRFolder}/{$finalFrontFileName}"));
-                $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-                $image->setImageResolution(300, 300);
-                $imageData = $image->getImageBlob();
-
-                Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
-            }
-        }
-
-        foreach ($rows as $key => $row)
-        {
-            try {
-
-                $rewardId = RewardItem::whereValue($row[4])->value('id');
-
-                $wd = WD::updateOrCreate([
-                    'code' => $row[0],
-                ],[
-                    'firm_name' => $row[1],
-                    'section_code' => $row[2],
-                ]);
-
-                // final coupon path
-                $qrCodeRewardAmt = "{$newQRFolder}/{$row[4]}";
-
-                if(!storage_disk()->exists($qrCodeRewardAmt)) {
-                    storage_disk()->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
-                }
-
-                $imagePath = "{$qrCodeRewardAmt}/{$row[3]}.png";
-
-                $qrCodeItem = QRCodeItem::updateOrCreate([
-                    'serial_number' => $row[3],
-                ],[
-                    'reward_item_id' => $rewardId,
-                    'wd_id' => $wd->id,
-                    'path' => $imagePath,
-                ]);
-
-                $url = url('/')."/login/?uid={$qrCodeItem->id}";
-
-                $qrCodeItem->update([
-                    'url' => $url,
-                ]);
-
-            } catch (ValidationException $e) {
-                $this->failed($e);
-            } catch (\Exception $e) {
-                $this->failed($e);
-            }
-        }
-    }
-    public function startRow(): int
-    {
-        return 2;
-    }
-    public function rules():array
-    {
-        return [
-            '*.0' => ['required'],
-            '*.1' => ['required'],
-            '*.2' => ['sometimes'],
-            '*.3' => ['required'],
-            '*.4' => ['required','numeric'],
-        ];
-    }
-    public function customValidationAttributes()
-    {
-        return [
-            '0' => 'WD Code',
-            '1' => 'WD Firm Name',
-            '2' => 'Section Code',
-            '3' => 'Serial Number',
-            '4' => 'Amount',
-        ];
-    }
-
-    public function onError(Throwable $error)
-    {
-        \Log::error('Import failed (onError): '.$exception->getMessage());
-    }
-    /**
-     * Handle a job failure.
+     * Create a new job instance.
      *
-     * @param  \Exception  $exception
      * @return void
      */
-    public function failed($e)
+    public function __construct(Collection $qrCodeItems)
     {
-        if ($e instanceof ValidationException) {
-            $this->importedBy->notify(new ImportHasFailedNotification($e->failures()));
-        } else {
-            // Handle other exceptions here...
-            \Log::error('Import failed (failed): '.$e->getMessage());
+        $this->qrCodeItems = $qrCodeItems;
+
+    }
+
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
+    {
+        foreach ($this->qrCodeItems as $qrCodeItem){
+            if(!storage_disk()->exists($qrCodeItem->path)){
+                $rewardValue = $qrCodeItem->rewardItem->value;
+                $qr_code_file = "qr-code/{$qrCodeItem->path}";
+                $qrCodeImage = QrCode::format('png')
+                        ->size(550)->errorCorrection('H')
+                        ->generate($qrCodeItem->url);
+
+                if(config('app.env')=='local'){
+                    Storage::disk('public')->put($qr_code_file, $qrCodeImage);
+                    $image = new Imagick(Storage::disk('public')->path("{$qr_code_file}"));
+                    $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                    $image->setImageResolution(300, 300);
+                    $image->writeImage(Storage::disk('public')->path("{$qr_code_file}"));
+                }else{
+                    Storage::disk('gcs')->put($qr_code_file, $qrCodeImage);
+                    $image = new Imagick();
+                    $image->readImageBlob(Storage::disk('gcs')->get("{$qr_code_file}"));
+                    $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                    $image->setImageResolution(300, 300);
+                    $imageData = $image->getImageBlob();
+
+                    Storage::disk('gcs')->put("{$qr_code_file}", $imageData);
+                }
+
+                $back = Image::make(public_path('images/coupon_template/back.png'));
+
+                $back->text($qrCodeItem->coupon_code, 520, 700, function($font) {
+                    $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
+                    $font->size(26);
+                    $font->color('#2C3689');
+                    $font->align('left');
+                    $font->valign('bottom');
+                });
+
+                $back->text($qrCodeItem->serial_number, 109, 90, function($font) {
+                    $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
+                    $font->size(26);
+                    $font->color('#2C3689');
+                    $font->align('left');
+                    $font->valign('bottom');
+                });
+
+                if(config('app.env')=='local'){
+                    $qrCode = Image::make(Storage::disk('public')->path("{$qr_code_file}")); //qr-code
+                    $back->insert($qrCode, 'top-left', 110, 100);
+
+                    $finalQRCode = Storage::disk('public')->path("{$qrCodeItem->path}");
+                    $imgSave = $back->save($finalQRCode);
+
+                    $image = new Imagick($finalQRCode);
+                    $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                    $image->setImageResolution(300, 300);
+                    $image->writeImage($finalQRCode);
+                }else{
+                    $qrCode = Image::make(Storage::disk('gcs')->publicUrl("{$qr_code_file}")); //qr-code
+                    $back->insert($qrCode, 'top-left', 110, 100);
+
+                    $imageData = $back->encode();
+                    Storage::disk('gcs')->put("{$qrCodeItem->path}", $imageData);
+
+                    $image = new Imagick();
+                    $image->readImageBlob(Storage::disk('gcs')->get("{$qrCodeItem->path}"));
+                    $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                    $image->setImageResolution(300, 300);
+                    $imageData1 = $image->getImageBlob();
+
+                    Storage::disk('gcs')->put("{$qrCodeItem->path}", $imageData1);
+                }
+
+                \Log::info("qrcodelog: ". $qrCodeItem->serial_number . "_" . $rewardValue);
+            }
         }
     }
-    public function registerEvents(): array
-    {
-        $user = Auth::user();
-        return [
-            ImportFailed::class => function(ImportFailed $event) {
-                $user->notify(new ImportHasFailedNotification($event->getException()));
-            },
-        ];
-    }
-
-    public function getRowCount(): int
-    {
-        return $this->rowCount;
-    }
-    public function chunkSize(): int
-    {
-        return 200;
-    }
-
 }

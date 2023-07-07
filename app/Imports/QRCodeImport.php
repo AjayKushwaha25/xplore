@@ -34,50 +34,46 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
     public function collection(Collection $rows)
     {
-        $todaysDate = now()->format('d-m-Y');
-        // $batch
-        $newQRFolder = "coupons/{$todaysDate}";
-
-        if(!storage_disk()->exists($newQRFolder)) {
-            storage_disk()->makeDirectory($newQRFolder, 0777, true); //creates directory
-        }
-
-        // $finalFront = storage_path("app/public/{$newQRFolder}/front.png");
-        $finalFrontFileName = "front.png";
-        if(config('app.env')=='local'){
-            $finalFront = Storage::disk('public')->path("{$newQRFolder}/{$finalFrontFileName}");
-        }else{
-            $finalFront = Storage::disk('gcs')->publicUrl("{$newQRFolder}/{$finalFrontFileName}");
-        }
-
-        if(!storage_disk()->exists($finalFront)){
-            $front = Image::make(public_path('images/coupon_template/front.png'));
-
-            if(config('app.env')=='local'){
-                $front->save($finalFront);
-                $image = new Imagick($finalFront);
-                $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-                $image->setImageResolution(300, 300);
-                $image->writeImage($finalFront);
-            }else{
-                $imageData = $front->encode();
-                Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
-
-                $image = new Imagick();
-                $image->readImageBlob(Storage::disk('gcs')->get("{$newQRFolder}/{$finalFrontFileName}"));
-                $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-                $image->setImageResolution(300, 300);
-                $imageData = $image->getImageBlob();
-
-                Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
-            }
-        }
-            
         foreach ($rows as $key => $row)
         {
             try {
+                $newQRFolder = "coupons/{$row[0]}";
 
-                $rewardId = RewardItem::whereValue($row[4])->value('id');
+                if(!storage_disk()->exists($newQRFolder)) {
+                    storage_disk()->makeDirectory($newQRFolder, 0777, true); //creates directory
+                }
+
+                $finalFrontFileName = "front.png";
+                if(config('app.env')=='local'){
+                    $finalFront = Storage::disk('public')->path("{$newQRFolder}/{$finalFrontFileName}");
+                }else{
+                    $finalFront = Storage::disk('gcs')->publicUrl("{$newQRFolder}/{$finalFrontFileName}");
+                }
+
+                if(!storage_disk()->exists($finalFront)){
+                    $front = Image::make(public_path('images/coupon_template/front.png'));
+
+                    if(config('app.env')=='local'){
+                        $front->save($finalFront);
+                        $image = new Imagick($finalFront);
+                        $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                        $image->setImageResolution(300, 300);
+                        $image->writeImage($finalFront);
+                    }else{
+                        $imageData = $front->encode();
+                        Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
+
+                        $image = new Imagick();
+                        $image->readImageBlob(Storage::disk('gcs')->get("{$newQRFolder}/{$finalFrontFileName}"));
+                        $image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+                        $image->setImageResolution(300, 300);
+                        $imageData = $image->getImageBlob();
+
+                        Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
+                    }
+                }
+
+                $rewardId = RewardItem::whereValue($row[5])->value('id');
 
                 $wd = WD::updateOrCreate([
                     'code' => $row[0],
@@ -87,7 +83,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 ]);
 
                 // final coupon path
-                $qrCodeRewardAmt = "{$newQRFolder}/{$row[4]}";
+                $qrCodeRewardAmt = "{$newQRFolder}/{$row[5]}";
 
                 if(!storage_disk()->exists($qrCodeRewardAmt)) {
                     storage_disk()->makeDirectory($qrCodeRewardAmt, 0777, true); //creates directory
@@ -101,9 +97,10 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                     'reward_item_id' => $rewardId,
                     'wd_id' => $wd->id,
                     'path' => $imagePath,
+                    'coupon_code' => $row[4]
                 ]);
 
-                $url = url('/')."/login/?uid={$qrCodeItem->id}";
+                $url = url('/')."/login/?uid={$qrCodeItem->id}&serial_number={$row[3]}&coupon_code={$row[4]}";
 
                 $qrCodeItem->update([
                     'url' => $url,
@@ -127,7 +124,8 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
             '*.1' => ['required'],
             '*.2' => ['sometimes'],
             '*.3' => ['required'],
-            '*.4' => ['required','numeric'],
+            '*.4' => ['required'],
+            '*.5' => ['required','numeric'],
         ];
     }
     public function customValidationAttributes()
@@ -137,7 +135,8 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
             '1' => 'WD Firm Name',
             '2' => 'Section Code',
             '3' => 'Serial Number',
-            '4' => 'Amount',
+            '4' => 'Coupon Code',
+            '5' => 'Amount',
         ];
     }
 
