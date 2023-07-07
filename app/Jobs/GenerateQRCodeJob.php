@@ -73,7 +73,17 @@ class GenerateQRCodeJob implements ShouldQueue
                 //     $font->valign('bottom');
                 // });
 
-                $back->text($qrCodeItem->serial_number, 145, 720, function($font) {
+                $back->text($qrCodeItem->serial_number, 520, 700, function($font) {
+                    $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
+                    $font->size(26);
+                    $font->color('#2C3689');
+                    $font->align('left');
+                    $font->valign('bottom');
+                });
+
+                $new_serial_num = "GWA1-350";
+
+                $back->text($new_serial_num, 109, 90, function($font) {
                     $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
                     $font->size(26);
                     $font->color('#2C3689');
