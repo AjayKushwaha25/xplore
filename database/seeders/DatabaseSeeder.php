@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserRoleSeeder::class,
             RewardItemSeeder::class,
-            // CouponCodeSeeder::class,
+            CouponCodeSeeder::class,
         ]);
     }
 }
