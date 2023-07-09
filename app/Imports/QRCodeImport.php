@@ -37,6 +37,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
         foreach ($rows as $key => $row)
         {
             try {
+                ++$this->rowCount;
                 $newQRFolder = "coupons/{$row[0]}";
 
                 if(!storage_disk()->exists($newQRFolder)) {
@@ -107,8 +108,10 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 ]);
 
             } catch (ValidationException $e) {
+                \Log::info($this->rowCount);
                 $this->failed($e);
             } catch (\Exception $e) {
+                \Log::info($this->rowCount);
                 $this->failed($e);
             }
         }
