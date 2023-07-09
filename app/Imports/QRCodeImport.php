@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Imagick;
 
-class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithChunkReading, ShouldQueue, WithEvents
+class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithChunkReading, WithEvents
 {
     public $rowCount = 0;
     public $importedBy;
@@ -76,7 +76,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
                 $rewardId = RewardItem::whereValue($row[5])->value('id');
 
-                $wd = WD::updateOrCreate([
+                $wd = WD::firstOrCreate([
                     'code' => $row[0],
                 ],[
                     'firm_name' => $row[1],
@@ -92,7 +92,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
                 $imagePath = "{$qrCodeRewardAmt}/{$row[3]}.png";
 
-                $qrCodeItem = QRCodeItem::updateOrCreate([
+                $qrCodeItem = QRCodeItem::firstOrCreate([
                     'serial_number' => $row[3],
                 ],[
                     'reward_item_id' => $rewardId,
