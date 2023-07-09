@@ -41,7 +41,6 @@ return [
             'retry_after' => 90,
             'after_commit' => false,
             'chunkSize' => 200,
-            'timeout' => 120,
         ],
 
         'beanstalkd' => [
