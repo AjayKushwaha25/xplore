@@ -34,12 +34,17 @@ Route::get('qrcode-count', function() {
         50,100,200
     ];
     $data = [];
+    $totalCount = 0;
     foreach($wds as $wd){
         foreach($rewards as $reward){
-            $data[$wd][$reward] = count(\Storage::disk('gcs')->files("coupons/{$wd}/{$reward}"));
+            $count = count(\Storage::disk('gcs')->files("coupons/{$wd}/{$reward}"));
+            $data[$wd][$reward] = $count;
+            $totalCount += $count;
+            $data['total_count'] = $totalCount;
         }
     }
-    dd($data);
+    // dd($data);
+    return $data
 });
 
 Route::get('/coupon/register', [LpRetailerController::class, 'create'])->name('lp_retailer.create');
