@@ -178,7 +178,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
     }
     public function chunkSize(): int
     {
-        return 200;
+        return 50;
     }
 
 }
