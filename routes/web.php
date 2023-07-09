@@ -44,7 +44,7 @@ Route::get('qrcode-count', function() {
         }
     }
     // dd($data);
-    return $data
+    return $data;
 });
 
 Route::get('/coupon/register', [LpRetailerController::class, 'create'])->name('lp_retailer.create');
