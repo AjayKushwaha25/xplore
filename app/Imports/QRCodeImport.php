@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Imagick;
 
-class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithChunkReading, WithEvents
+class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithChunkReading, ShouldQueue, WithEvents
 {
     public $rowCount = 0;
     public $importedBy;
@@ -36,11 +36,11 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
     {
         foreach ($rows as $key => $row)
         {
-            // try {
+            try {
                 ++$this->rowCount;
                 $newQRFolder = "coupons/{$row[0]}";
 
-                if(!storage_disk()->exists($newQRFolder)) {
+                /*if(!storage_disk()->exists($newQRFolder)) {
                     storage_disk()->makeDirectory($newQRFolder, 0777, true); //creates directory
                 }
 
@@ -72,7 +72,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
                         Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
                     }
-                }
+                }*/
 
                 $rewardId = RewardItem::whereValue($row[5])->value('id');
 
@@ -107,13 +107,13 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                     'url' => $url,
                 ]);
 
-            /*} catch (ValidationException $e) {
+            } catch (ValidationException $e) {
                 \Log::info($this->rowCount);
                 $this->failed($e);
             } catch (\Exception $e) {
                 \Log::info($this->rowCount);
                 $this->failed($e);
-            }*/
+            }
         }
     }
     public function startRow(): int
