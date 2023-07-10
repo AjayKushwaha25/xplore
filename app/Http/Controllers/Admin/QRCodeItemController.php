@@ -88,14 +88,11 @@ class QRCodeItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(QRCodeItem $qr_code)
     {
-        $qrCodeItem = QRCodeItem::with([
-                                            'rewardItem:id,value'
-                                        ])
-                                        ->whereId($id)
-                                        ->get();
-        return view('admin.view-by-id.qr_code', compact('qrCodeItem'));
+        $qr_code->load('rewardItem:id,value');
+
+        return view('admin.view-by-id.qr_code', compact('qr_code'));
     }
 
     /**
@@ -170,7 +167,7 @@ class QRCodeItemController extends Controller
     public function generateBulkQRCode()
     {
         $qrCodeItems = QRCodeItem::with('rewardItem:id,value')
-                    ->select('url','path','serial_number','reward_item_id')
+                    ->select('url','path','serial_number','reward_item_id','coupon_code')
                     ->get();
         $chunkSize = 50;
 
@@ -182,5 +179,5 @@ class QRCodeItemController extends Controller
 
         return back()->with('qrcode-generation-success', 'Printable file will be generated shortly.');
     }
-    
+
 }

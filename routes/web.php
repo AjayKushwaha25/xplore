@@ -18,8 +18,33 @@ use App\Http\Controllers\Admin\{UserController, BackendController, AdminControll
 
 
 Route::get('qrcode-count', function() {
-    $folder = request()->get('folder');
-    return count(\Storage::disk('gcs')->files($folder));
+    $wds = [
+        'NG3160',
+        'NG3104',
+        'BH3072',
+        'BH3041',
+        'NG3054',
+        'NG2949',
+        'PU2224',
+        'PU4031',
+        'AH3132',
+        'AH3123'
+    ];
+    $rewards = [
+        50,100,200
+    ];
+    $data = [];
+    $totalCount = 0;
+    foreach($wds as $wd){
+        foreach($rewards as $reward){
+            $count = count(\Storage::disk('gcs')->files("coupons/{$wd}/{$reward}"));
+            $data[$wd][$reward] = $count;
+            $totalCount += $count;
+            $data['total_count'] = $totalCount;
+        }
+    }
+    // dd($data);
+    return $data;
 });
 
 Route::get('/coupon/register', [LpRetailerController::class, 'create'])->name('lp_retailer.create');

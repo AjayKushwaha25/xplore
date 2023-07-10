@@ -16,8 +16,10 @@ class PagesController extends Controller
             'message' => $request->message ?? ''
         ];
         $qrcodeId = $request->get('uid');
+        $serialNumber = $request->get('serial_number');
+        $couponCode = $request->get('coupon_code');
 
-        return view('login', compact('qrcodeId', 'data'));
+        return view('login', compact('qrcodeId', 'data', 'serialNumber', 'couponCode'));
     }
 
     public function register(Request $request){
@@ -26,8 +28,10 @@ class PagesController extends Controller
             'message' => $request->message ?? ''
         ];
         $qrcodeId = $request->get('uid');
+        $serialNumber = $request->get('serial_number');
+        $couponCode = $request->get('coupon_code');
 
-        return view('signup', compact('qrcodeId', 'data'));
+        return view('signup', compact('qrcodeId', 'data', 'serialNumber', 'couponCode'));
     }
 
     public function reward(){

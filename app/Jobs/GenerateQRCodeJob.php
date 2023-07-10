@@ -28,6 +28,7 @@ class GenerateQRCodeJob implements ShouldQueue
     public function __construct(Collection $qrCodeItems)
     {
         $this->qrCodeItems = $qrCodeItems;
+
     }
 
     /**
@@ -64,15 +65,15 @@ class GenerateQRCodeJob implements ShouldQueue
 
                 $back = Image::make(public_path('images/coupon_template/back.png'));
 
-                $back->text($rewardValue, 1340, 600, function($font) {
+                $back->text($qrCodeItem->coupon_code, 520, 700, function($font) {
                     $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
-                    $font->size(150);
+                    $font->size(26);
                     $font->color('#2C3689');
                     $font->align('left');
                     $font->valign('bottom');
                 });
 
-                $back->text($qrCodeItem->serial_number, 500, 700, function($font) {
+                $back->text($qrCodeItem->serial_number, 109, 90, function($font) {
                     $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
                     $font->size(26);
                     $font->color('#2C3689');
