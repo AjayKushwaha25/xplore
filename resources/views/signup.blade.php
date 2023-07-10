@@ -53,7 +53,7 @@
             </div>
 
             <div class="mb-2">
-                <input type="text" class="form-input @error('upi_id') is-invalid @enderror" value="{{ old('upi_id') }}" id="upi_id" placeholder="UPI ID" name="upi_id">
+                <input type="text" class="form-input @error('upi_id') is-invalid @enderror" value="{{ old('upi_id') }}" id="upi_id" placeholder="UPI ID / Paytm Number" name="upi_id">
                 @error('upi_id')
                 <div class="invalid-feedback">
                     {{ $message }}
