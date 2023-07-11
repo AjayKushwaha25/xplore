@@ -58,15 +58,6 @@
 
                 <input type="radio" id="paytm_number_btn" name="payment_mode" value="paytm_number" {{ old('payment_mode') == 'paytm_number' ? 'checked' : '' }}/>
                 <label class="text-white" for="paytm_number_btn">Paytm Number</label>
-
-                @error('upi_id')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-                <script type="text/javascript">
-                    toastr.error("{{ $message }}", 'Error!',{"positionClass": "toast-top-right"})
-                </script>
-                @enderror
             </div>
 
             <div class="mb-2">
@@ -80,18 +71,6 @@
                 </script>
                 @enderror
             </div>
-
-            {{-- <div class="mb-2" id="paytmNumberDiv" style="display: none;">
-                <input type="text" class="form-input @error('upi_id') is-invalid @enderror" value="{{ old('upi_id') }}" id="paytm_number" placeholder="Paytm Number" name="upi_id">
-                @error('upi_id')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-                <script type="text/javascript">
-                    toastr.error("{{ $message }}", 'Error!',{"positionClass": "toast-top-right"})
-                </script>
-                @enderror
-            </div> --}}
 
             <div class="mb-2">
                 <input type="number" class="form-input @error('coupon_code') is-invalid @enderror" value="{{ old('coupon_code') }}" id="coupon_code" placeholder="Enter coupon code" name="coupon_code" required>
@@ -117,6 +96,16 @@
 </div>
 @endsection
 @section('script')
+@if($data['status'] == 'failed')
+@include('components.message', ['message' => $data['message'],'option'=>config('constants.error.option'),'title'=>config('constants.error.title')])
+@endif
+@if(\Session::get('status') == 'failed')
+@include('components.message', ['message' => \Session::get('message'),'option'=>config('constants.error.option'),'title'=>config('constants.error.title')])
+@endif
+@if(\Session::get('status') == 'success')
+@include('components.message', ['message' => \Session::get('message'),'option'=>config('constants.success.option'),'title'=>config('constants.success.title')])
+@endif
+
 
 <script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
 <script type="text/javascript">
@@ -163,13 +152,4 @@
         }
     });
 </script>
-@if($data['status'] == 'failed')
-@include('components.message', ['message' => $data['message'],'option'=>config('constants.error.option'),'title'=>config('constants.error.title')])
-@endif
-@if(\Session::get('status') == 'failed')
-@include('components.message', ['message' => \Session::get('message'),'option'=>config('constants.error.option'),'title'=>config('constants.error.title')])
-@endif
-@if(\Session::get('status') == 'success')
-@include('components.message', ['message' => \Session::get('message'),'option'=>config('constants.success.option'),'title'=>config('constants.success.title')])
-@endif
 @endsection
