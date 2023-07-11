@@ -121,22 +121,31 @@
 <script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        var radioButtons = document.querySelectorAll('input[name="payment_mode"]');
+        var radioButtons = $('input[name="payment_mode"]');
+        var selectedPaymentMode = $('input[name="payment_mode"]:checked');
         var upiID = $("#upi_id");
 
+        if (selectedPaymentMode.val() === "upi_id") {
+            upiID.attr('type', 'text');
+            upiID.attr('placeholder','UPI ID');
+        } else if (selectedPaymentMode.val() === "paytm_number") {
+            upiID.attr('type', 'number');
+            upiID.attr('placeholder', 'Paytm Number');
+        }
+
         // Add event listeners to the radio buttons
-        radioButtons.forEach(function(radioButton) {
-            radioButton.addEventListener('change', function() {
+        radioButtons.each(function() {
+            $(this).on('change', function() {
                 upiID.val('');
                 if (this.value === "upi_id") {
+                    upiID.attr('type', 'text');
                     upiID.attr('placeholder','UPI ID');
-                } else {
-                    upiID.attr('type','number')
+                } else if (this.value === "paytm_number") {
+                    upiID.attr('type','number');
                     upiID.attr('placeholder','Paytm Number');
                 }
             });
         });
-
 
         function upiValid(inputs, inputsID, inputsErr){
             userInput = inputs;

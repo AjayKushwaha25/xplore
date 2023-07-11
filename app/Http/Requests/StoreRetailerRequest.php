@@ -34,4 +34,12 @@ class StoreRetailerRequest extends FormRequest
             'coupon_code' => 'required|numeric|min:4',
         ];
     }
+
+    public function messages()
+    {
+
+        return [
+            'upi_id.required' => 'The VPA field is required.',
+        ];
+    }
 }

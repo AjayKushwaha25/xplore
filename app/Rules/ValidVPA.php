@@ -45,11 +45,11 @@ class ValidVPA implements Rule
     public function message()
     {
         if($this->paymentMode == 'upi_id'){
-            return 'The :attribute must be a valid UPI ID.';
+            return 'The given VPA must be a valid UPI ID.';
         }
 
         if($this->paymentMode == 'paytm_number'){
-            return 'The :attribute must be a valid Paytm Number.';
+            return 'The given VPA must be a valid Paytm Number.';
         }
 
         return 'The :attribute must be a valid VPA.';
