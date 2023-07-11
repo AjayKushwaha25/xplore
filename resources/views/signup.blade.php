@@ -53,7 +53,12 @@
             </div>
 
             <div class="mb-2">
-                <input type="text" class="form-input @error('upi_id') is-invalid @enderror" value="{{ old('upi_id') }}" id="upi_id" placeholder="UPI ID / Paytm Number" name="upi_id">
+                <input type="radio" id="upi_id_btn" name="payment_mode" value="upi_id" {{ old('payment_mode') == 'upi_id' ? 'checked' : 'checked' }} required  />
+                <label class="text-white" for="upi_id_btn">UPI ID</label>
+
+                <input type="radio" id="paytm_number_btn" name="payment_mode" value="paytm_number" {{ old('payment_mode') == 'paytm_number' ? 'checked' : '' }}/>
+                <label class="text-white" for="paytm_number_btn">Paytm Number</label>
+
                 @error('upi_id')
                 <div class="invalid-feedback">
                     {{ $message }}
@@ -63,6 +68,30 @@
                 </script>
                 @enderror
             </div>
+
+            <div class="mb-2">
+                <input type="text" class="form-input @error('upi_id') is-invalid @enderror" value="{{ old('upi_id') }}" id="upi_id" placeholder="UPI ID" name="upi_id">
+                @error('upi_id')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+                <script type="text/javascript">
+                    toastr.error("{{ $message }}", 'Error!',{"positionClass": "toast-top-right"})
+                </script>
+                @enderror
+            </div>
+
+            {{-- <div class="mb-2" id="paytmNumberDiv" style="display: none;">
+                <input type="text" class="form-input @error('upi_id') is-invalid @enderror" value="{{ old('upi_id') }}" id="paytm_number" placeholder="Paytm Number" name="upi_id">
+                @error('upi_id')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+                <script type="text/javascript">
+                    toastr.error("{{ $message }}", 'Error!',{"positionClass": "toast-top-right"})
+                </script>
+                @enderror
+            </div> --}}
 
             <div class="mb-2">
                 <input type="number" class="form-input @error('coupon_code') is-invalid @enderror" value="{{ old('coupon_code') }}" id="coupon_code" placeholder="Enter coupon code" name="coupon_code" required>
@@ -88,6 +117,43 @@
 </div>
 @endsection
 @section('script')
+
+<script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var radioButtons = document.querySelectorAll('input[name="payment_mode"]');
+        var upiID = $("#upi_id");
+
+        // Add event listeners to the radio buttons
+        radioButtons.forEach(function(radioButton) {
+            radioButton.addEventListener('change', function() {
+                upiID.val('');
+                if (this.value === "upi_id") {
+                    upiID.attr('placeholder','UPI ID');
+                } else {
+                    upiID.attr('type','number')
+                    upiID.attr('placeholder','Paytm Number');
+                }
+            });
+        });
+
+
+        function upiValid(inputs, inputsID, inputsErr){
+            userInput = inputs;
+            showError = inputsErr;
+            var regex = new RegExp('^([a-zA-Z0-9]+)([\.{1}])?([a-zA-Z0-9]+)\@?(paytm|okicici|oksbi|okaxis|okhdfcbank|ybl|upi|axl)+$');
+            if(!regex.test(userInput)){
+                showError.show();
+                inputsID.focus();
+                inputsID.css('border-color','#dc3545');
+                return false;
+            }
+            showError.hide();
+            inputsID.css('border-color','#ced4da');
+            return true;
+        }
+    });
+</script>
 @if($data['status'] == 'failed')
 @include('components.message', ['message' => $data['message'],'option'=>config('constants.error.option'),'title'=>config('constants.error.title')])
 @endif
