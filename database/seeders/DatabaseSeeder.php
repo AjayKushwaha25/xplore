@@ -20,7 +20,11 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserRoleSeeder::class,
             RewardItemSeeder::class,
-            CouponCodeSeeder::class,
+            WdSeeder::class,
+            QRCodeItemSeeder::class,
+
+
+            // CouponCodeSeeder::class,
         ]);
     }
 }
