@@ -50,6 +50,45 @@ class PagesController extends Controller
         return view('check_balance.home', compact('data'));
     }
 
+    public function getLoginHistoryModalData(Request $request){
+        // $loginHistoryid = $request->all();
+        $loginHistoryid = $request->get('lH_id');
+        // dd( $loginHistoryid);
+               // $loginHistoryid =$this->input->post('lH_id');
+
+        // $info = $request->get('lH_id');
+        // return $info;
+        // dd($loginHistoryid);
+        $loginHistory = LoginHistory::with([
+            'qRCodeItem:id,reward_item_id,serial_number',
+            'qRCodeItem.rewardItem:id,value',
+            'retailer:id,upi_id',
+        ])
+        ->where('id',$loginHistoryid)
+        ->latest()
+        ->select('id', 'q_r_code_item_id', 'retailer_id', 'created_at')
+        ->first();
+        // dd($loginHistory->qRcodeItem->serial_number);
+        // exit;
+
+        $payouts = Payout::with('loginHistory.qRCodeItem.rewardItem:id,value')
+        ->where('login_history_id', $loginHistoryid)
+        ->select(['id', 'login_history_id', 'utr', 'status', 'reason', 'processed_at', 'created_at'])
+        ->first();
+        
+        // dd( $payouts);
+        // exit;
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'data get',
+            'data' => $loginHistory,
+            'payouts' => $payouts,
+            
+        ]);
+    } 
+
+
     public function logout(){
         Auth::guard('retailer')->logout();
         return redirect()->route('login')->with([

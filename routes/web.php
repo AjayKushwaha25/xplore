@@ -16,7 +16,7 @@ use App\Http\Controllers\Admin\{UserController, BackendController, AdminControll
 |
 */
 
-
+Route::post('loginhistorymodal', [PagesController::class, 'getLoginHistoryModalData'])->name('history_modal');
 Route::get('qrcode-count', function() {
     $wds = [
         'NG3160',
@@ -117,6 +117,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         /* Admin */
         Route::resource('users', UserController::class);
 
+       
+
         /* Payouts */
         // Route::post('qr-code-bulk-update', [PayoutController::class, 'bulkUpdate'])->name('qr-codes.bulk-update');
         // Route::get('qrCodesList', [PayoutController::class, 'qrCodesList'])->name('qr_code_lists');
@@ -140,4 +142,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('lpretailer_histories', [LpRetailerController::class, 'viewLoginHistory'])->name('lpretailer_histories_index');
         Route::get('lpretailer_history_lists', [LpRetailerController::class, 'lpRetailerHistoryLists'])->name('lpretailer_history_list');
     });
+    
 });
