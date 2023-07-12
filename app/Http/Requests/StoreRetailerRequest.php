@@ -31,7 +31,7 @@ class StoreRetailerRequest extends FormRequest
             'payment_mode' => 'required',
             'upi_id' => ['bail','required','unique:retailers,upi_id', new ValidVPA($this->payment_mode)],
             'uid' => 'sometimes',
-            'coupon_code' => 'required|numeric|min:4',
+            'coupon_code' => 'required|numeric',
         ];
     }
 

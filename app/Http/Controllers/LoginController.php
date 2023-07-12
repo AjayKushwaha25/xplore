@@ -19,7 +19,7 @@ class LoginController extends Controller
             ]);
         }
 
-        $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->whereSerialNumber($request->validated('coupon_code'))->first();
+        $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->whereCouponCode($request->validated('coupon_code'))->first();
         if(!$qrCodeItem){
             return back()->withInput()->with([
                     'status' => 'failed',
