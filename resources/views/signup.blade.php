@@ -53,7 +53,15 @@
             </div>
 
             <div class="mb-2">
-                <input type="text" class="form-input @error('upi_id') is-invalid @enderror" value="{{ old('upi_id') }}" id="upi_id" placeholder="UPI ID / Paytm Number" name="upi_id">
+                <input type="radio" id="upi_id_btn" name="payment_mode" value="upi_id" {{ old('payment_mode') == 'upi_id' ? 'checked' : 'checked' }} required  />
+                <label class="text-white" for="upi_id_btn">UPI ID</label>
+
+                <input type="radio" id="paytm_number_btn" name="payment_mode" value="paytm_number" {{ old('payment_mode') == 'paytm_number' ? 'checked' : '' }}/>
+                <label class="text-white" for="paytm_number_btn">Paytm Number</label>
+            </div>
+
+            <div class="mb-2">
+                <input type="text" class="form-input @error('upi_id') is-invalid @enderror" value="{{ old('upi_id') }}" id="upi_id" placeholder="UPI ID" name="upi_id">
                 @error('upi_id')
                 <div class="invalid-feedback">
                     {{ $message }}
@@ -97,4 +105,51 @@
 @if(\Session::get('status') == 'success')
 @include('components.message', ['message' => \Session::get('message'),'option'=>config('constants.success.option'),'title'=>config('constants.success.title')])
 @endif
+
+
+<script src="{{ asset('js/jquery-3.6.4.min.js') }}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var radioButtons = $('input[name="payment_mode"]');
+        var selectedPaymentMode = $('input[name="payment_mode"]:checked');
+        var upiID = $("#upi_id");
+
+        if (selectedPaymentMode.val() === "upi_id") {
+            upiID.attr('type', 'text');
+            upiID.attr('placeholder','UPI ID');
+        } else if (selectedPaymentMode.val() === "paytm_number") {
+            upiID.attr('type', 'number');
+            upiID.attr('placeholder', 'Paytm Number');
+        }
+
+        // Add event listeners to the radio buttons
+        radioButtons.each(function() {
+            $(this).on('change', function() {
+                upiID.val('');
+                if (this.value === "upi_id") {
+                    upiID.attr('type', 'text');
+                    upiID.attr('placeholder','UPI ID');
+                } else if (this.value === "paytm_number") {
+                    upiID.attr('type','number');
+                    upiID.attr('placeholder','Paytm Number');
+                }
+            });
+        });
+
+        function upiValid(inputs, inputsID, inputsErr){
+            userInput = inputs;
+            showError = inputsErr;
+            var regex = new RegExp('^([a-zA-Z0-9]+)([\.{1}])?([a-zA-Z0-9]+)\@?(paytm|okicici|oksbi|okaxis|okhdfcbank|ybl|upi|axl)+$');
+            if(!regex.test(userInput)){
+                showError.show();
+                inputsID.focus();
+                inputsID.css('border-color','#dc3545');
+                return false;
+            }
+            showError.hide();
+            inputsID.css('border-color','#ced4da');
+            return true;
+        }
+    });
+</script>
 @endsection

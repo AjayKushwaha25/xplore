@@ -62,7 +62,10 @@
                                         {{-- <th>Action</th> --}}
                                     </tr>
                                 </thead>
+
                             </table>
+
+
 
                         </div>
                     </div>
@@ -136,7 +139,7 @@
                 { data: 'login_history.q_r_code_item.serial_number', name: 'loginHistory.qRCodeItem.serial_number',
                     render : function(data, type, row) {
                         url = '{{ route('admin.qr-codes.show',['qr_code' => ':qrCodeId']) }}'.replace(':qrCodeId', row.login_history.q_r_code_item.id);
-                        return '<a href="'+url+'">'+row.login_history.q_r_code_item.serial_number+'</a>';
+                return  row.login_history.q_r_code_item.serial_number;
                     }
                 },
                 // { data: 'q_r_code_item.serial_number', name: 'qRCodeItem.serial_number'},

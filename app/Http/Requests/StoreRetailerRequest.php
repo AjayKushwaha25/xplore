@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\ValidVPA;
 
 class StoreRetailerRequest extends FormRequest
 {
@@ -27,9 +28,18 @@ class StoreRetailerRequest extends FormRequest
             'name' => 'bail|required',
             'mobile_number' => 'bail|required|numeric|digits:10|unique:retailers,mobile_number',
             'whatsapp_number' => 'bail|required|numeric|digits:10',
-            'upi_id' => 'bail|required|unique:retailers,upi_id',
+            'payment_mode' => 'required',
+            'upi_id' => ['bail','required','unique:retailers,upi_id', new ValidVPA($this->payment_mode)],
             'uid' => 'sometimes',
-            'coupon_code' => 'required|digits:5',
+            'coupon_code' => 'required|numeric|min:4',
+        ];
+    }
+
+    public function messages()
+    {
+
+        return [
+            'upi_id.required' => 'The VPA field is required.',
         ];
     }
 }
