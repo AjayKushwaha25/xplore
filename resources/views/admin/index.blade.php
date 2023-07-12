@@ -221,7 +221,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    <a href="{{ route('admin.view_success_payout') }}">
+                    <a href="{{route('admin.payouts.index',['status' => 'success']) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -245,7 +245,7 @@
                 </div>
                 
                 <div class="col-md-3">
-                    <a href="{{ route('admin.view_pending_payout') }}">
+                    <a href="{{ route('admin.payouts.index',['status' => 'pending']) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -269,7 +269,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    <a href="{{ route('admin.view_failed_payout') }}">
+                    <a href="{{ route('admin.payouts.index',['status' => 'failed']) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">

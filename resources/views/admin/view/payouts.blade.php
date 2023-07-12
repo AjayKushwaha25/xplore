@@ -128,7 +128,7 @@
             stateSave: true,
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.payout_lists') }}",
+            ajax: "{{ route('admin.payout_lists', ['status'=>request()->get('status')]) }}",
             columns: [
                 { data: 'login_history.retailer.name', name: 'loginHistory.retailer.name' ,
                     render : function(data, type, row) {
