@@ -194,6 +194,7 @@ svg {
                     @endif
 
                     <br>
+                    
 
                     @if(!is_null($processedAt))
                     {!! $processedAt !!}
@@ -328,7 +329,7 @@ svg {
                             var status = "failed";
                         }
                         else if(status1 == "2"){
-                            var status = "pending";
+                            var status = "processing";
                         }
                        
                         var p_date = $payoutData.created_at;
@@ -342,7 +343,7 @@ svg {
                             $('#reason').html($payoutData.reason);
                             $('#payout_date').html(payout_date);
                             $('#utr').html($payoutData.utr);
-                            $('#status').html(status1);
+                            $('#status').html(status);
                         }
                         else{
                             $('#reason').html("null");
@@ -361,6 +362,6 @@ svg {
         }
 
     });
-</script>
+
 </script>
 @endsection

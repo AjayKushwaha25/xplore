@@ -73,7 +73,7 @@
             </div>
 
             <div class="mb-2">
-                <input type="number" class="form-input @error('coupon_code') is-invalid @enderror" value="{{ old('coupon_code') }}" id="coupon_code" placeholder="Enter coupon code" name="coupon_code" required>
+                <input type="number" class="form-input @error('coupon_code') is-invalid @enderror" value="{{ old('coupon_code') }}" id="coupon_code" placeholder="Enter coupon code" name="coupon_code">
                 @error('coupon_code')
                 <div class="invalid-feedback">
                     {{ $message }}

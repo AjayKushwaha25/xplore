@@ -14,7 +14,7 @@ class CalculatePendingPayoutAction
             ])
             ->whereRetailerId($retailerId)
             ->latest()
-            ->select('id', 'q_r_code_item_id', 'created_at');
+            ->select('id', 'q_r_code_item_id','created_at');
 
         $payouts = Payout::with('loginHistory.qRCodeItem.rewardItem:id,value')
             ->whereIn('login_history_id', $loginHistory->pluck('id'))

@@ -19,13 +19,13 @@ class LoginController extends Controller
             ]);
         }
 
-        $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->whereCouponCode($request->validated('coupon_code'))->first();
-        if(!$qrCodeItem){
-            return back()->withInput()->with([
-                    'status' => 'failed',
-                    'message' => 'Enter valid Coupon Code.'
-                ]);
-        }
+        $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->first();
+        // if(!$qrCodeItem){
+        //     return back()->withInput()->with([
+        //             'status' => 'failed',
+        //             'message' => 'Enter valid Coupon Code.'
+        //         ]);
+        // }
 
         $rewardValue = RewardItem::whereId($qrCodeItem->reward_item_id)->whereStatus(1)->value('value');
 

@@ -10,13 +10,13 @@ use Auth;
 class RegisterController extends Controller
 {
     public function register(StoreRetailerRequest $request){
-        $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->whereCouponCode($request->validated('coupon_code'))->first();
-        if(!$qrCodeItem){
-            return back()->withInput()->with([
-                    'status' => 'failed',
-                    'message' => 'Enter valid Coupon Code.'
-                ]);
-        }
+        $qrCodeItem = QRCodeItem::whereId($request->validated('uid'))->first();
+        // if(!$qrCodeItem){
+        //     return back()->withInput()->with([
+        //             'status' => 'failed',
+        //             'message' => 'Enter valid Coupon Code.'
+        //         ]);
+        // }
 
         $retailer = Retailer::create($request->validated());
         if(!$retailer){
