@@ -39,14 +39,19 @@ class LoginController extends Controller
         if (Auth::guard('retailer')->loginUsingId($retailerId)) {
             $qrCodeItem->is_redeemed = 1;
             $qrCodeItem->update();
-            $data = [
-                'retailer_id' => Auth::guard('retailer')->id(),
-                'q_r_code_item_id' => $request->validated('uid'),
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ];
 
-            $loginHistory = LoginHistory::create($data);
+            $checkIfQRCodeAlreadyScanned = LoginHistory::whereQRCodeItemId($request->validated('uid'))->exists();
+
+            if(!$checkIfQRCodeAlreadyScanned){
+                $data = [
+                    'retailer_id' => Auth::guard('retailer')->id(),
+                    'q_r_code_item_id' => $request->validated('uid'),
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ];
+
+                LoginHistory::create($data);
+            }
 
             return redirect()->route('reward')->with([
                 'status' => 'success',

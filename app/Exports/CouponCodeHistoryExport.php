@@ -18,10 +18,6 @@ class CouponCodeHistoryExport implements FromCollection, WithMapping, WithHeadin
     public function headings(): array
     {
         return[
-            // 'Lp Retailer Id',
-            // 'Coupon code id',
-            // 'Created At',
-
             'Name',
             'Mobile number',
             'Whatsapp number',

@@ -21,7 +21,7 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
             'Mobile number',
             'Whatsapp number',
             'UPI ID',
-            'WD Code'
+            'WD Code',
             'Serial Number',
             'Reward Value',
             'IP Address',
