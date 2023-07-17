@@ -56,8 +56,8 @@
                 <input type="radio" id="upi_id_btn" name="payment_mode" value="upi_id" {{ old('payment_mode') == 'upi_id' ? 'checked' : 'checked' }} required  />
                 <label class="text-white" for="upi_id_btn">UPI ID</label>
 
-                <input type="radio" id="paytm_number_btn" name="payment_mode" value="paytm_number" {{ old('payment_mode') == 'paytm_number' ? 'checked' : '' }}/>
-                <label class="text-white" for="paytm_number_btn">Paytm Number</label>
+                {{-- <input type="radio" id="paytm_number_btn" name="payment_mode" value="paytm_number" {{ old('payment_mode') == 'paytm_number' ? 'checked' : '' }}/>
+                <label class="text-white" for="paytm_number_btn">Paytm Number</label> --}}
             </div>
 
             <div class="mb-2">
