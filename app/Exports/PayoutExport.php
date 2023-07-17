@@ -21,6 +21,7 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
             'Username',
             'Mobile number',
             'WD Code',
+            'City',
             'UPI ID',
             'Serial Number',
             'Notes',
@@ -35,9 +36,10 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
             $loginHistory->retailer->name,
             $loginHistory->retailer->mobile_number,
             $loginHistory->qRCodeItem->wd->code,
+            $loginHistory->qRCodeItem->wd->city->name,
             $loginHistory->retailer->upi_id,
             $loginHistory->qRCodeItem->serial_number,
-            "{$loginHistory->qRCodeItem->wd->code}:{$loginHistory->retailer->upi_id}:{$loginHistory->retailer->mobile_number}:{$loginHistory->qRCodeItem->serial_number}:\"{$loginHistory->created_at}\"",
+            config('app.name').":{$loginHistory->qRCodeItem->wd->code}:{$loginHistory->retailer->upi_id}:{$loginHistory->retailer->mobile_number}:{$loginHistory->qRCodeItem->serial_number}:\"{$loginHistory->created_at}\"",
             $loginHistory->created_at
         ];
     }
@@ -53,6 +55,7 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
                 $event->sheet->getDelegate()->getColumnDimension('E')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('F')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('G')->setAutoSize(true);
+                $event->sheet->getDelegate()->getColumnDimension('H')->setAutoSize(true);
 
             },
         ];
@@ -60,7 +63,7 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
     }
 
     /**
@@ -68,11 +71,18 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
     */
     public function collection()
     {
-         return LoginHistory::with(['retailer:id,name,mobile_number,upi_id,whatsapp_number','qRCodeItem:id,serial_number,reward_item_id,wd_id','qRCodeItem.wd:id,code','qRCodeItem.rewardItem:id,value'])
-                    ->whereBetween('created_at',[$this->startDate, $this->endDate])
-                    ->select('id','retailer_id','q_r_code_item_id','created_at')
-                    ->orderBy('created_at','ASC')
-                    ->get();
+         return LoginHistory::query()->
+                            with([
+                                'retailer:id,name,mobile_number,upi_id,whatsapp_number',
+                                'qRCodeItem:id,serial_number,reward_item_id,wd_id',
+                                'qRCodeItem.rewardItem:id,value',
+                                'qRCodeItem.wd:id,code,city_id',
+                                'qRCodeItem.wd.city:id,name'
+                            ])
+                            ->whereBetween('created_at',[$this->startDate, $this->endDate])
+                            ->select('id','retailer_id','q_r_code_item_id','created_at')
+                            ->orderBy('created_at','ASC')
+                            ->get();
     }
 
 }
