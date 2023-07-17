@@ -27,7 +27,7 @@ class RetailerRequest extends FormRequest
             'uid' => 'sometimes',
             'name' => 'bail|required',
             'mobile_number' => 'bail|required|numeric|digits:10',
-            'coupon_code' => 'required|numeric',
+            'coupon_code' => 'sometimes',
         ];
     }
 }
