@@ -62,41 +62,6 @@ class AdminController extends Controller
         ];
         return view('admin.view.generate_qr_code')->with('data',$data);
     }
-    public static function directoryLists($qrCodePublicPath){
-        // return DIRECTORY_SEPARATOR;
-        $result = [];
-
-        $currentDirectory = scandir($qrCodePublicPath);
-        // return $currentDirectory;
-        $id = 1;
-        foreach ($currentDirectory as $key => $value)
-        {
-            if(!in_array($value, array(".","..")))
-            {
-                $fullPath = $qrCodePublicPath . DIRECTORY_SEPARATOR . $value;
-                // $id = $key;
-                // dd($fullPath, Carbon::parse(filemtime($fullPath))->format('d-m-Y h:i A'));
-                /*
-                $fullPath = $qrCodePublicPath . DIRECTORY_SEPARATOR . $value;
-                if (is_dir($fullPath))
-                {
-                     $result[$fullPath] = self::directoryLists($fullPath);
-                }
-                else
-                {
-                    $result[] = $fullPath;
-                }*/
-                if(is_dir($fullPath)){
-                    $result2['sr_no'] = $id;
-                    $result2['folder_name'] = $value;
-                    $result2['created_at'] = Carbon::parse(filemtime($fullPath))->format('d-m-Y h:i A');
-                    $result[$id++] = $result2;
-                }
-            }
-       }
-
-       return $result;
-    }
 
     public function export(){
         $tables = [
@@ -104,23 +69,15 @@ class AdminController extends Controller
             'retailers',
             'login_histories',
             'lp_retailers',
-            'coupon_code_histories',  
+            'coupon_code_histories',
+            'master_report'
         ];
-        // dd($tables);
+
         $data = [
-            // 'counts' => NavHelper::getCounts(),
-            // 'tables' => CustomHelper::getAllTables(),
             'tables' => $tables,
             'ignoreTables' => CustomHelper::ignoredTables(),
         ];
-        // dd($data['tables']);
+
         return view('admin/export')->with('data',$data);
     }
-
-    /* View */
-
-    /* Add */
-
-    /* Edit View */
-
 }

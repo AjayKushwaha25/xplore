@@ -25,13 +25,13 @@
                         {{-- <li><a href="{{ route('admin.qr-codes.create') }}" key="t-add-qr-code">Generate QR Code</a></li> --}}
                     </ul>
                 </li>
+                @endif
                 <li>
                     <a href="{{ url('admin/export') }}" class="waves-effect">
                         <i class="bx bx-export"></i>
                         <span key="t-export">Export Excel</span>
                     </a>
                 </li>
-                @endif
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="bx bx-user"></i>
