@@ -4,7 +4,8 @@ namespace App\Exports;
 
 use App\Models\LoginHistory;
 use Maatwebsite\Excel\Concerns\{FromCollection,WithCustomStartCell, WithMapping, WithHeadings, WithEvents, WithStyles};
-// use Maatwebsite\Excel\Concerns\;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -22,7 +23,8 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
             'WD Code',
             'Total Coupon Shared',
             'Total Coupon Utilised',
-            'Total Unique Retailers (till Date)',
+            '% coupon utilization',
+            'Total Unique Retailers',
             '> 2 transactions',
             '> 5 transactions',
         ];
@@ -36,6 +38,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
             $loginHistory['code'],
             $loginHistory['total'],
             $loginHistory['redeemed'],
+            $loginHistory['percentage'],
             $loginHistory['totalRetailers'],
             '',
             '',
@@ -53,10 +56,11 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
                 $event->sheet->getDelegate()->getColumnDimension('E')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('F')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('G')->setAutoSize(true);
+                $event->sheet->getDelegate()->getColumnDimension('H')->setAutoSize(true);
 
                 /* Merge Column */
-                $event->sheet->mergeCells('F1:G1');
-                $event->sheet->setCellValue('F1', "Retailer Count till Date");
+                $event->sheet->mergeCells('G1:H1');
+                $event->sheet->setCellValue('G1', "Retailer Count");
 
                 $styleArray = [
                     'alignment' => [
@@ -64,7 +68,36 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
                     ],
                 ];
 
-                $event->sheet->getDelegate()->getStyle('A1:G1')->applyFromArray($styleArray);
+                $event->sheet->getDelegate()->getStyle('A1:H1')->applyFromArray($styleArray);
+
+
+                $highestColumn = $event->sheet->getHighestColumn();
+                $lastRow = $event->sheet->getHighestDataRow();
+
+                // Calculate and insert grand totals
+                $event->sheet->setCellValue("A" . ($lastRow + 2), 'Grand Total');
+                $event->sheet->setCellValue("C" . ($lastRow + 2), "=SUM(C3:C" . $lastRow . ")");
+                $event->sheet->setCellValue("D" . ($lastRow + 2), "=SUM(D3:D" . $lastRow . ")");
+                $event->sheet->setCellValue("E" . ($lastRow + 2), "=D" . ($lastRow + 2) . "/C" . ($lastRow + 2));
+                $event->sheet->setCellValue("F" . ($lastRow + 2), "=SUM(F3:F" . $lastRow . ")");
+
+
+                // Set formatting for the grand total row
+                $event->sheet->getStyle("A" . ($lastRow + 2) . ":" . $highestColumn . ($lastRow + 2))
+                    ->getFont()
+                    ->setBold(true);
+
+                $event->sheet->getStyle("D" . ($lastRow + 2) . ":" . $highestColumn . ($lastRow + 2))
+                    ->getNumberFormat()
+                    ->setFormatCode("#,##0");
+
+                $event->sheet->getStyle("E")
+                    ->getNumberFormat()
+                    ->setFormatCode("0.00%");
+
+                $event->sheet->getStyle("E" . ($lastRow + 2))
+                    ->getNumberFormat()
+                    ->setFormatCode("0.00%");
             },
         ];
     }
@@ -90,12 +123,15 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
                 return $item['wd']['code'];
             })
             ->map(function ($group) {
+                $total = count($group);
                 $redeemed = $group->where('is_redeemed', 1)->count();
                 $cityName = $group->first()['wd']['city']['name'];
+                $percentage = $total > 0 ? ($redeemed / $total) : 0; // Calculate percentage
                 return [
                     'city' => $cityName,
-                    'total' => count($group),
-                    'redeemed' => $redeemed
+                    'total' => $total,
+                    'redeemed' => $redeemed,
+                    'percentage' => $percentage
                 ];
             })
             ->toArray();
