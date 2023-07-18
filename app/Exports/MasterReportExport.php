@@ -36,10 +36,10 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
         return [
             $loginHistory['city'],
             $loginHistory['code'],
-            $loginHistory['total'],
-            $loginHistory['redeemed'],
-            $loginHistory['percentage'],
-            $loginHistory['totalRetailers'],
+            $loginHistory['total']!==0 ? $loginHistory['total'] : '0',
+            $loginHistory['redeemed']!==0 ? $loginHistory['redeemed'] : '0',
+            $loginHistory['percentage']!==0 ? $loginHistory['percentage'] : '0',
+            $loginHistory['totalRetailers']!==0 ? $loginHistory['totalRetailers'] : '0',
             '',
             '',
         ];
@@ -56,6 +56,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
                 $event->sheet->getDelegate()->getColumnDimension('E')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('F')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('G')->setAutoSize(true);
+                $event->sheet->getDelegate()->getColumnDimension('H')->setAutoSize(true);
                 $event->sheet->getDelegate()->getColumnDimension('H')->setAutoSize(true);
 
                 /* Merge Column */
@@ -104,8 +105,8 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
 
     public function styles(Worksheet $sheet)
     {
-        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
-        $sheet->getStyle('A2:G2')->getFont()->setBold(true);
+        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
+        $sheet->getStyle('A2:H2')->getFont()->setBold(true);
     }
 
     /**
@@ -113,33 +114,39 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
     */
     public function collection()
     {
+        $wd = \App\Models\WD::with([
+            'city:id,name'
+        ])
+        ->get(['code', 'city_id']);
+
         $totalQRCode = \App\Models\QRCodeItem::with([
             'wd:id,code,city_id',
             'wd.city:id,name'
         ])
-            ->select('id', 'wd_id', 'is_redeemed')
-            ->get()
-            ->groupBy(function ($item) {
-                return $item['wd']['code'];
-            })
-            ->map(function ($group) {
-                $total = count($group);
-                $redeemed = $group->where('is_redeemed', 1)->count();
-                $cityName = $group->first()['wd']['city']['name'];
-                $percentage = $total > 0 ? ($redeemed / $total) : 0; // Calculate percentage
-                return [
-                    'city' => $cityName,
-                    'total' => $total,
-                    'redeemed' => $redeemed,
-                    'percentage' => $percentage
-                ];
-            })
-            ->toArray();
+        ->select('id', 'wd_id', 'is_redeemed')
+        ->get()
+        ->groupBy(function ($item) {
+            return $item['wd']['code'];
+        })
+        ->map(function ($group) {
+            $total = count($group);
+            $redeemed = $group->where('is_redeemed', 1)->count();
+            $cityName = $group->first()['wd']['city']['name'];
+            $percentage = $total > 0 ? ($redeemed / $total) : 0; // Calculate percentage
+            return [
+                'city' => $cityName,
+                'total' => $total,
+                'redeemed' => $redeemed,
+                'percentage' => $percentage
+            ];
+        })
+        ->toArray();
+
 
         $data = \App\Models\LoginHistory::join('q_r_code_items', 'login_histories.q_r_code_item_id', '=', 'q_r_code_items.id')
             ->join('wd', 'q_r_code_items.wd_id', '=', 'wd.id')
             ->join('cities', 'wd.city_id', '=', 'cities.id')
-            ->whereBetween('login_histories.created_at',[$this->startDate, $this->endDate])
+            ->whereBetween('login_histories.created_at', [$this->startDate, $this->endDate])
             ->select(
                 'wd.code',
                 'cities.name AS city',
@@ -152,14 +159,40 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
 
         // Merge the two queries
         $mergedData = [];
-        foreach ($data as $item) {
-            $code = $item['code'];
-            if (isset($totalQRCode[$code])) {
-                $mergedData[] = array_merge($item, $totalQRCode[$code]);
+        foreach ($wd as $wdItem) {
+            $code = $wdItem['code'];
+            $mergedItem = [
+                'code' => $code,
+                'city' => $wdItem['city']['name'] ?? 'Unknown City',
+                'total' => '0',
+                'redeemed' => '0',
+                'percentage' => '0%',
+                'totalRetailers' => '0'
+            ];
+
+            // Find the matching item in the $data array
+            $matchingItem = null;
+            foreach ($data as $item) {
+                if ($item['code'] === $code) {
+                    $matchingItem = $item;
+                    break;
+                }
             }
+
+            if ($matchingItem !== null) {
+                $mergedItem = array_merge($mergedItem, $matchingItem);
+            }
+
+            if (isset($totalQRCode[$code])) {
+                $mergedItem = array_merge($mergedItem, $totalQRCode[$code]);
+            }
+
+            $mergedData[] = $mergedItem;
         }
 
-        return collect($mergedData);
+return collect($mergedData);
+
+
     }
 
     public function startCell(): string
