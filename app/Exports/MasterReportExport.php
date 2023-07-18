@@ -103,7 +103,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
 
         $data = \App\Models\LoginHistory::join('q_r_code_items', 'login_histories.q_r_code_item_id', '=', 'q_r_code_items.id')
             ->join('wd', 'q_r_code_items.wd_id', '=', 'wd.id')
-            ->join('cities', 'wd.city_id', '=', 'cities.id');
+            ->join('cities', 'wd.city_id', '=', 'cities.id')
             ->whereBetween('created_at',[$this->startDate, $this->endDate])
             ->select(
                 'wd.code',
