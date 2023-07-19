@@ -33,7 +33,7 @@ class BackendController extends Controller
         } else {
             return back()->with([
                 'status' => 'failed',
-                "message", "Authentication failed",
+                "message" => "Authentication failed",
             ]);
         }
     }
