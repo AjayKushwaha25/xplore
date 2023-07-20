@@ -35,7 +35,7 @@ class ValidVPA implements Rule
 
         return $isUpiId || $isPhoneNumber;*/
 
-        return $isUpiId
+        return $isUpiId;
     }
 
     /**
