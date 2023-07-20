@@ -172,62 +172,57 @@ class PayoutController extends Controller
     {
     }
 
-    public function getPayoutCount(){
+    public function getPayoutCount(Request $request){
+        $status = $request->get('status');
+
+        $payoutAmount=0;
+
+        $payout = Payout::with([
+                'loginHistory:id,q_r_code_item_id',
+                'qRCodeItem:id,reward_item_id',
+                'qRCodeItem.rewardItem:id,value'
+            ])
+            ->select('login_history_id');
+            
+
+
+        switch ($status) {
+            case 'total':
+                $totalPayout = LoginHistory::with([
+                                'qRCodeItem:id,reward_item_id',
+                                'qRCodeItem.rewardItem:id,value'
+                    ])->select('q_r_code_item_id')->get();
+
+                    foreach ($totalPayout as $totalPayout) {
+                        $payoutAmount += $totalPayout->qRCodeItem->rewardItem->value;
+                        }
+                    
+                    break;
+            case 'success': 
+                        $successPayout =  $payout->where('status',1)->get();
+                        foreach ($successPayout as $successPayout) {
+                            $payoutAmount += $successPayout->loginHistory->qRCodeItem->rewardItem->value;
+                        }
+                           
+                    break;
+            case 'failed':
+                        $failedPayout =  $payout->where('status',0)->get();
+                        foreach ($failedPayout as $failedPayout) {
+                            $payoutAmount += $failedPayout->loginHistory->qRCodeItem->rewardItem->value;
+                            }
+               
+                break;
+            case 'pending':
+                $pendingPayout =  $payout->where('status',2)->get();
+                        foreach ($pendingPayout as $pendingPayout) {
+                            $payoutAmount += $pendingPayout->loginHistory->qRCodeItem->rewardItem->value;
+                            }
+                    
+                break;
+        }
    
-        $totalPayout = LoginHistory::with([
-            'qRCodeItem:id,reward_item_id',
-            'qRCodeItem.rewardItem:id,value'
-        ])->select('q_r_code_item_id')->get();
-        $totalPayoutAmount=0;
-        foreach ($totalPayout as $totalPayout) {
-            $totalPayoutAmount += $totalPayout->qRCodeItem->rewardItem->value;
-            }
-        
-        $status1 = 1;
-        $successPayout = Payout::with([
-        'loginHistory:id,q_r_code_item_id',
-        'qRCodeItem:id,reward_item_id',
-        'qRCodeItem.rewardItem:id,value'
-        ])->select('login_history_id')->where('status',$status1)->get();
-        
-        $successPayoutAmount = 0;
-        foreach ($successPayout as $successPayout) {
-            $successPayoutAmount += $successPayout->loginHistory->qRCodeItem->rewardItem->value;
-            }
-           
-        $status2 = 0;
-        $failedPayout = Payout::with([
-            'loginHistory:id,q_r_code_item_id',
-            'qRCodeItem:id,reward_item_id',
-            'qRCodeItem.rewardItem:id,value'
-        ])->select('login_history_id')->where('status',$status2)->get();
-    
-        $failedPayoutAmount = 0;
-        foreach ($failedPayout as $failedPayout) {
-            $failedPayoutAmount += $failedPayout->loginHistory->qRCodeItem->rewardItem->value;
-            }
-    
-        $status3 = 2;
-      
-        $pendingPayout = Payout::with([
-            'loginHistory:id,q_r_code_item_id',
-            'qRCodeItem:id,reward_item_id',
-            'qRCodeItem.rewardItem:id,value'
-        ])->select('login_history_id')->where('status',$status3)->get();
-
-        $pendingPayoutAmount = 0;
-        foreach ($pendingPayout as $pendingPayout) {
-            $pendingPayoutAmount += $pendingPayout->loginHistory->qRCodeItem->rewardItem->value;
-            }
-
-        $data = [
-            'totalPayoutAmount' => $totalPayoutAmount,
-            'successPayoutAmount' => $successPayoutAmount,
-            'failedPayoutAmount' => $failedPayoutAmount,
-            'pendingPayoutAmount' => $pendingPayoutAmount,
-        ];
-
-        return $data;
+       
+        return response()->json(['payoutamount' => $payoutAmount]);
  
     }
 

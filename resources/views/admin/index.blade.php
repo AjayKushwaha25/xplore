@@ -62,7 +62,10 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium mb-1">Total Coupons</p>
-                                                <h5 class="mb-0">{{ $data['counts']['totalCouponRedeemedCount'] }} | {{ $data['counts']["totalCouponCount"] }}</h5>
+                                                <h5 class="mb-0">
+                                                    <span id="totalCouponRedeemedCount">0</span> |
+                                                    <span id="totalCouponCount">0</span>
+                                                </h5>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
@@ -85,7 +88,10 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium mb-1">₹ {{ $coupon->value }} Coupons</p>
-                                                <h5 class="mb-0">{{ $data['counts']["countRedeemed{$coupon->value}"] }} | {{ $data['counts']["count{$coupon->value}"] }}</h5>
+                                                <h5 class="mb-0">
+                                                    <span  id="countRedeemedCoupon{{ $coupon->value }}">0</span> | 
+                                                    <span  id="countCoupon{{ $coupon->value }}">0</span>
+                                                </h5>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
@@ -195,7 +201,9 @@
                         </div>
                     </a>
                 </div>
+            </div>
 
+            <div class="row">
                 <div class="col-md-3">
                     <a href="{{ route('admin.login-histories') }}">
                         <div class="card mini-stats-wid">
@@ -203,7 +211,7 @@
                                 <div class="d-flex">
                                     <div class="flex-grow-1">
                                         <p class="text-muted fw-medium mb-1">Total Payouts</p>
-                                        <h5 class="mb-0" id="total_payout">{{$result['totalPayoutAmount']}}</h5>
+                                        <h5 class="mb-0" id="total_payout"></h5>
 
                                     </div>
 
@@ -227,7 +235,7 @@
                                 <div class="d-flex">
                                     <div class="flex-grow-1">
                                         <p class="text-muted fw-medium mb-1">Success Payout</p>
-                                        <h5 class="mb-0" id="success_payout">{{$result['successPayoutAmount']}}</h5>
+                                        <h5 class="mb-0" id="success_payout"></h5>
 
                                     </div>
 
@@ -251,7 +259,7 @@
                                 <div class="d-flex">
                                     <div class="flex-grow-1">
                                         <p class="text-muted fw-medium mb-1">Pending Payout</p>
-                                        <h5 class="mb-0" id="pending_payout">{{$result['pendingPayoutAmount']}}</h5>
+                                        <h5 class="mb-0" id="pending_payout"></h5>
 
                                     </div>
 
@@ -275,7 +283,7 @@
                                 <div class="d-flex">
                                     <div class="flex-grow-1">
                                         <p class="text-muted fw-medium mb-1">Failed Payouts</p>
-                                        <h5 class="mb-0" id="failed_payouts">{{$result['failedPayoutAmount']}}</h5>
+                                        <h5 class="mb-0" id="failed_payouts"></h5>
 
                                     </div>
 
@@ -293,6 +301,7 @@
                 </div>
 
             </div>
+
             <div class="row">
                 <div class="col-md-7">
                     <div class="card">
@@ -375,6 +384,8 @@
 
 @section('script')
 <script>
+
+    // user count
     $(function() {
         function getUserCount(range, container) {
             $.ajax({
@@ -395,6 +406,50 @@
             getUserCount('last7days', '#retailer-count-last7days');
             getUserCount('last30days', '#retailer-count-last30days');
             getUserCount('last90days', '#retailer-count-last90days');
+        }, 10000);
+    });
+
+    // payout count
+    $(function() {
+        function getPayoutCount(status, container) {
+            $.ajax({
+                url: "{{ route('admin.payout_count',['status'=>'']) }}"+status,
+                dataType: 'json',
+                success: function(data) {
+                    $(container).text(data.payoutamount);
+                }
+            });
+        }
+
+        getPayoutCount('success', '#success_payout');
+        getPayoutCount('pending', '#pending_payout');
+        getPayoutCount('failed', '#failed_payouts');
+        getPayoutCount('total', '#total_payout');
+        setInterval(function() {
+            getPayoutCount('success', '#success-payout');
+            getPayoutCount('pending', '#pending_payout');
+            getPayoutCount('failed', '#failed_payouts');
+            getPayoutCount('total', '#total_payout');
+        }, 10000);
+    });
+
+    $(function() {
+        function getCouponCount() {
+            $.ajax({
+                url: "{{ route('admin.get_coupon_count') }}",
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data.couponCounts)
+                    $.each(data.couponCounts, function(key,value){
+                        $("#"+key).text(value);
+                    });
+                }
+            });
+        }
+
+        getCouponCount();
+        setInterval(function() {
+            getCouponCount();
         }, 10000);
     });
 </script>
