@@ -18,6 +18,8 @@ use CustomHelper;
 class AdminController extends Controller
 {
     public function index(){
+
+
         $loginHistories = LoginHistory::with([
                 'retailer:id,name,mobile_number',
                 'qRCodeItem:id,serial_number,reward_item_id',
@@ -41,24 +43,27 @@ class AdminController extends Controller
             ->take(10);
 
         $scannedHistories = $loginHistories->take(10);
-            
-        $payout_count = new PayoutController;
-        $result = $payout_count->getPayoutCount();
 
         $data = [
-            'counts' => NavHelper::getCounts(),
+            // 'counts' => NavHelper::getCouponCounts(),
             'coupons' => RewardItem::orderBy('value')->get(['id','value']),
             'scannedHistories' => $scannedHistories,
             'topScannedUsers' => $topScannedUsers,
         ];
 
-        return view('admin.index', compact('data','result'));
+        return view('admin.index', compact('data'));
     }
 
+    public function getCouponCount(Request $request){
+        $counts = NavHelper::getCouponCounts();
+        return response()->json(['couponCounts' => $counts]);
+
+    }
+    
 
     public function generateQRCode(){
         $data = [
-            // 'counts' => NavHelper::getCounts(),
+            // 'counts' => NavHelper::getCouponCounts(),
         ];
         return view('admin.view.generate_qr_code')->with('data',$data);
     }

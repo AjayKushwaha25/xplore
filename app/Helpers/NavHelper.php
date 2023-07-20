@@ -6,16 +6,16 @@ use App\Models\CountsModel;
 
 class NavHelper
 {
-    public static function getCounts(){
+    public static function getCouponCounts(){
         $counts = [
-            'count50' => CountsModel::getCouponCount(50),
-            'count100' => CountsModel::getCouponCount(100),
-            'count200' => CountsModel::getCouponCount(200),
+            'countCoupon50' => CountsModel::getCouponCount(50),
+            'countCoupon100' => CountsModel::getCouponCount(100),
+            'countCoupon200' => CountsModel::getCouponCount(200),
             'totalCouponCount'  => CountsModel::getCouponCount(),
 
-            'countRedeemed50' => CountsModel::getCouponCount(50,1),
-            'countRedeemed100' => CountsModel::getCouponCount(100,1),
-            'countRedeemed200' => CountsModel::getCouponCount(200,1),
+            'countRedeemedCoupon50' => CountsModel::getCouponCount(50,1),
+            'countRedeemedCoupon100' => CountsModel::getCouponCount(100,1),
+            'countRedeemedCoupon200' => CountsModel::getCouponCount(200,1),
             'totalCouponRedeemedCount'  => CountsModel::getCouponCount(null,1),
         ];
         // dd($counts);
