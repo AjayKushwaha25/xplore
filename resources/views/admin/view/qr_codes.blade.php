@@ -71,6 +71,7 @@
                                     <tr>
                                         <th>Serial Number</th>
                                         <th>URL</th>
+                                        <th>WD Code</th>
                                         <th>Coupon</th>
                                         <th>Reward Amount</th>
                                         <th>Is Redeemed?</th>
@@ -119,6 +120,7 @@
             ajax: "{{ route('admin.qr_code_lists', ['reward_id'=>request()->get('reward_id')]) }}",
             columns: [
                 { data: 'serial_number', name: 'serial_number' },
+                { data: 'wd.code', name: 'wd.code'},
                 { data: 'url', name: 'url' ,
                     render : function(data, type, row) {
                         url = row.url;

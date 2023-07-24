@@ -20,7 +20,7 @@ class WD extends Model
     ];
     
     public function qRCodeItems() {
-        return $this->hasMany(QRCodeItem::class);
+        return $this->hasMany(QRCodeItem::class, 'wd_id', 'id');
     }
 
     public function city() {
