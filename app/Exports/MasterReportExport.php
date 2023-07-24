@@ -133,6 +133,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
                 $total = $item->total;
                 $redeemed = $item->redeemed;
                 $percentage = $total > 0 ? ($redeemed / $total) : 0;
+                $formattedPercentage = number_format($percentage * 100, 2);
 
                 return [
                     $item->code => [
@@ -140,7 +141,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
                         'code' => $item->code,
                         'total' => $total,
                         'redeemed' => $redeemed,
-                        'percentage' => $percentage * 100 . '%',
+                        'percentage' => $formattedPercentage . '%',
                         'totalRetailers' => $item->totalRetailers ?? 0,
                         'moreThan2Count' => 0,
                         'moreThan5Count' => 0,
