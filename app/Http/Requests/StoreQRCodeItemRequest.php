@@ -25,7 +25,7 @@ class StoreQRCodeItemRequest extends FormRequest
     {
         return [
             'code' => 'required',
-            'firm_name' => 'required',
+            'firm_name' => 'sometimes',
             'city' => 'required',
             'serial_number' => 'required'
         ];
