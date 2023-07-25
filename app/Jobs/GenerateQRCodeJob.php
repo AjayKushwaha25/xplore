@@ -39,6 +39,7 @@ class GenerateQRCodeJob implements ShouldQueue
     public function handle()
     {
         foreach ($this->qrCodeItems as $qrCodeItem){
+            // dd($qrCodeItem);
             if(!storage_disk()->exists($qrCodeItem->path)){
                 $rewardValue = $qrCodeItem->rewardItem->value;
                 $qr_code_file = "qr-code/{$qrCodeItem->path}";
@@ -110,6 +111,10 @@ class GenerateQRCodeJob implements ShouldQueue
 
                 \Log::info("qrcodelog: ". $qrCodeItem->serial_number . "_" . $rewardValue);
             }
+
+            QRCodeItem::whereId($qrCodeItem->id)->update([
+                'is_qr_code_generated' => 1
+            ]);
         }
     }
 }

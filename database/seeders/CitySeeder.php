@@ -26,12 +26,13 @@ class CitySeeder extends Seeder
             'PU2224' => 'Kolhapur',
             'PU4031' => 'PUNE',
             'AH3132' => 'AHMADABAD',
-            'AH3123' => 'SURAT'
+            'AH3123' => 'SURAT',
         ];
 
         foreach($data as $wd => $city){
-            $city = City::create([
+            $city = City::firstOrCreate([
                 'name' => Str::title($city),
+            ],[
                 'abbr' => Str::upper(substr($city, 0, 3)),
                 'status' => 1
             ]);

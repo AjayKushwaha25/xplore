@@ -102,6 +102,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('qr-code-bulk-update', [QRCodeItemController::class, 'bulkUpdate'])->name('qr-codes.bulk-update');
         Route::get('qrCodesList', [QRCodeItemController::class, 'qrCodesList'])->name('qr_code_lists');
         Route::post('generate-qrcode', [QRCodeItemController::class, 'generateBulkQRCode'])->name('qr-codes.generate-qrcode');
+        Route::post('bulk-store', [QRCodeItemController::class, 'bulkStore'])->name('qr-codes.bulk_store');
         Route::resource('qr-codes', QRCodeItemController::class);
 
         Route::get('generate-qr-code', [AdminController::class, 'generateQRCode']);

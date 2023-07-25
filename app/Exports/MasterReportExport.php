@@ -85,20 +85,20 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
 
                 // Set formatting for the grand total row
                 $event->sheet->getStyle("A" . ($lastRow + 2) . ":" . $highestColumn . ($lastRow + 2))
-                    ->getFont()
-                    ->setBold(true);
+                ->getFont()
+                ->setBold(true);
 
                 $event->sheet->getStyle("D" . ($lastRow + 2) . ":" . $highestColumn . ($lastRow + 2))
-                    ->getNumberFormat()
-                    ->setFormatCode("#,##0");
+                ->getNumberFormat()
+                ->setFormatCode("#,##0");
 
                 $event->sheet->getStyle("E")
-                    ->getNumberFormat()
-                    ->setFormatCode("0.00%");
+                ->getNumberFormat()
+                ->setFormatCode("0.00%");
 
                 $event->sheet->getStyle("E" . ($lastRow + 2))
-                    ->getNumberFormat()
-                    ->setFormatCode("0.00%");
+                ->getNumberFormat()
+                ->setFormatCode("0.00%");
             },
         ];
     }
@@ -115,41 +115,41 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
     public function collection()
     {
         $mergedData = \App\Models\WD::leftJoin('cities', 'wd.city_id', '=', 'cities.id')
-            ->leftJoin('q_r_code_items', 'wd.id', '=', 'q_r_code_items.wd_id')
-            ->leftJoin('login_histories', 'q_r_code_items.id', '=', 'login_histories.q_r_code_item_id')
-            ->select(
-                'wd.id',
-                'wd.code',
-                'cities.name AS city',
-                \DB::raw('COUNT(DISTINCT login_histories.retailer_id) AS totalRetailers'),
+        ->leftJoin('q_r_code_items', 'wd.id', '=', 'q_r_code_items.wd_id')
+        ->leftJoin('login_histories', 'q_r_code_items.id', '=', 'login_histories.q_r_code_item_id')
+        ->select(
+            'wd.id',
+            'wd.code',
+            'cities.name AS city',
+            \DB::raw('COUNT(DISTINCT login_histories.retailer_id) AS totalRetailers'),
                 \DB::raw('SUM(q_r_code_items.is_redeemed) AS redeemed'), // Use the correct column name
                 \DB::raw('(SELECT COUNT(id) FROM q_r_code_items qr WHERE qr.wd_id = wd.id) AS total')
             )
-            ->groupBy('wd.id', 'wd.code', 'cities.name')
-            ->with('qRCodeItems:id,wd_id')
-            ->oldest('wd.created_at')
-            ->get()
-            ->map(function ($item) {
-                $total = $item->total;
-                $redeemed = $item->redeemed;
-                $percentage = $total > 0 ? ($redeemed / $total) : 0;
-                $formattedPercentage = number_format($percentage * 100, 2);
+        ->groupBy('wd.id', 'wd.code', 'cities.name')
+        ->with('qRCodeItems:id,wd_id')
+        ->oldest('wd.created_at')
+        ->get()
+        ->map(function ($item) {
+            $total = $item->total;
+            $redeemed = $item->redeemed;
+            $percentage = $total > 0 ? ($redeemed / $total) : 0;
+            $formattedPercentage = number_format($percentage * 100, 2);
 
-                return [
-                    $item->code => [
-                        'city' => $item->city,
-                        'code' => $item->code,
-                        'total' => $total,
-                        'redeemed' => $redeemed,
-                        'percentage' => $formattedPercentage . '%',
-                        'totalRetailers' => $item->totalRetailers ?? 0,
-                        'moreThan2Count' => 0,
-                        'moreThan5Count' => 0,
-                    ]
-                ];
-            })
-            ->collapse()
-            ->toArray();
+            return [
+                $item->code => [
+                    'city' => $item->city,
+                    'code' => $item->code,
+                    'total' => $total,
+                    'redeemed' => $redeemed,
+                    'percentage' => $formattedPercentage . '%',
+                    'totalRetailers' => $item->totalRetailers ?? 0,
+                    'moreThan2Count' => 0,
+                    'moreThan5Count' => 0,
+                ]
+            ];
+        })
+        ->collapse()
+        ->toArray();
 
         $loginHistories = \App\Models\LoginHistory::with([
             'retailer:id',
@@ -190,7 +190,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
             }
         }
 
-return collect($mergedData);
+        return collect($mergedData);
 
 
     }

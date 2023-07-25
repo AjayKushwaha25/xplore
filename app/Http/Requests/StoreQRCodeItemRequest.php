@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class QRCodeRequest extends FormRequest
+class StoreQRCodeItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,11 @@ class QRCodeRequest extends FormRequest
     public function rules()
     {
         return [
-            'file'  =>  'required|mimes:csv,txt',
+            'code' => 'required',
+            'firm_name' => 'required',
+            'city' => 'required',
+            'serial_number' => 'required',
+            'amount' => 'required'
         ];
     }
 }

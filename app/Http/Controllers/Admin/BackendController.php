@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\{AdminLoginRequest, QRCodeRequest, ExportRequest};
+use App\Http\Requests\{AdminLoginRequest, ImportRequest, ExportRequest};
 use Illuminate\Support\Facades\{Auth, File};
 use App\Models\{BackendModel, User};
 use App\Imports\{QRCodeImport};
@@ -69,7 +69,7 @@ class BackendController extends Controller
         }
     }
 
-    public function qrCodeGenerate(QRCodeRequest $request){
+    public function qrCodeGenerate(ImportRequest $request){
         try {
             $qrCodeImport = new QRCodeImport;
             $importDataArr = Excel::import($qrCodeImport,$request->validated('file'));

@@ -41,60 +41,67 @@ $publicPath = public_path($path);
                 </div>
             </div>
             @endif
+            @if (\Session::has('success'))
+            <div class="mb-3">
+                <div class="alert alert-success">
+                    <p style="margin-bottom: 0;">{!! \Session::get('success') !!}</p>
+                </div>
+            </div>
+            @endif
+            @if (\Session::has('qrcode-generation-success'))
+            <div class="mb-3">
+                <div class="alert alert-success">
+                    <p style="margin-bottom: 0;">{!! \Session::get('qrcode-generation-success') !!}</p>
+                </div>
+            </div>
+            @endif
+            @if (\Session::has('message'))
+            <div class="mb-3">
+                <div class="alert alert-danger">
+                    <p style="margin-bottom: 0;">{!! \Session::get('message') !!}</p>
+                </div>
+            </div>
+            @endif
+            @if ($message = Session::get('upload-success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{ $message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
+            @if ($message = Session::get('upload-empty'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>{{ $message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
+
+            @error('file')
+            <div class="mb-3">
+                <div class="alert alert-danger">
+                    <p style="margin-bottom: 0;">{{ $message }}</p>
+                </div>
+            </div>
+            @enderror
+            @if ($messages = Session::get('upload-failed'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <ol>
+                    @foreach($messages['errors'] as $error)
+                    <li>At row {{ $messages['rows'] }}, {{ $error }}</li>
+                    @endforeach
+                </ol>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
 
             <div class="row">
                 <div class="col-md-12">
                     <div class="row">
-                        <form action="{{ route('admin.qr-codes.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.qr-codes.bulk_store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="col-md-8">
                                 <div class="card">
                                     <div class="card-body">
                                         <h4 class="card-title mb-3">Bulk QR Code</h4>
-                                        @if (\Session::has('success'))
-                                        <div class="mb-3">
-                                            <div class="alert alert-success">
-                                                <p style="margin-bottom: 0;">{!! \Session::get('success') !!}</p>
-                                            </div>
-                                        </div>
-                                        @endif
-                                        @if (\Session::has('message'))
-                                        <div class="mb-3">
-                                            <div class="alert alert-danger">
-                                                <p style="margin-bottom: 0;">{!! \Session::get('message') !!}</p>
-                                            </div>
-                                        </div>
-                                        @endif
-                                        @if ($message = Session::get('upload-success'))
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                        @endif
-                                        @if ($message = Session::get('upload-empty'))
-                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                        @endif
-
-                                        @error('file')
-                                        <div class="mb-3">
-                                            <div class="alert alert-danger">
-                                                <p style="margin-bottom: 0;">{{ $message }}</p>
-                                            </div>
-                                        </div>
-                                        @enderror
-                                        @if ($messages = Session::get('upload-failed'))
-                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                            <ol>
-                                                @foreach($messages['errors'] as $error)
-                                                <li>At row {{ $messages['rows'] }}, {{ $error }}</li>
-                                                @endforeach
-                                            </ol>
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                        </div>
-                                        @endif
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="mb-3 row">
@@ -121,6 +128,69 @@ $publicPath = public_path($path);
                         @csrf
                         <input type="submit" name="submit" value="Generate QR Code">
                     </form>
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <form action="{{ route('admin.qr-codes.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="card-title mb-3">Bulk QR Code Form</h4>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="mb-3 row">
+                                                    <label class="col-md-2 col-form-label">WD Code: </label>
+                                                    <div class="col-md-10">
+                                                        <input class="form-control" type="text" name="code" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="mb-3 row">
+                                                    <label class="col-md-2 col-form-label">Firm Name: </label>
+                                                    <div class="col-md-10">
+                                                        <input class="form-control" type="text" name="firm_name" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="mb-3 row">
+                                                    <label class="col-md-2 col-form-label">City: </label>
+                                                    <div class="col-md-10">
+                                                        <input class="form-control" type="text" name="city" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="mb-3 row">
+                                                    <label class="col-md-2 col-form-label">Serial Number: </label>
+                                                    <div class="col-md-10">
+                                                        <input class="form-control" type="text" name="serial_number" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="mb-3 row">
+                                                    <label class="col-md-2 col-form-label">Amount: </label>
+                                                    <div class="col-md-10">
+                                                        <input class="form-control" type="text" name="amount" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <button style="z-index: 9;margin-right: 20px;margin-bottom: 20px;"  class="btn btn-success waves-effect waves-light">Generate Bulk QR Code</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

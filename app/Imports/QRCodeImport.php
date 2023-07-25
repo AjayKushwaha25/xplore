@@ -40,7 +40,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
                 ++$this->rowCount;
                 $newQRFolder = "coupons/{$row[0]}";
 
-                /*if(!storage_disk()->exists($newQRFolder)) {
+                if(!storage_disk()->exists($newQRFolder)) {
                     storage_disk()->makeDirectory($newQRFolder, 0777, true); //creates directory
                 }
 
@@ -72,7 +72,7 @@ class QRCodeImport implements ToCollection, WithValidation, WithStartRow, WithCh
 
                         Storage::disk('gcs')->put("{$newQRFolder}/{$finalFrontFileName}", $imageData);
                     }
-                }*/
+                }
 
                 $rewardId = RewardItem::whereValue($row[5])->value('id');
 
