@@ -27,8 +27,7 @@ class StoreQRCodeItemRequest extends FormRequest
             'code' => 'required',
             'firm_name' => 'required',
             'city' => 'required',
-            'serial_number' => 'required',
-            'amount' => 'required'
+            'serial_number' => 'required'
         ];
     }
 }

@@ -174,14 +174,6 @@ $publicPath = public_path($path);
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12">
-                                                <div class="mb-3 row">
-                                                    <label class="col-md-2 col-form-label">Amount: </label>
-                                                    <div class="col-md-10">
-                                                        <input class="form-control" type="text" name="amount" required>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
