@@ -97,6 +97,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     /* Following routes require Auth */
     Route::group(['middleware'=>['auth']], function () {
         Route::get('home', [AdminController::class, 'index'])->name('home');
+        Route::get('getLoginHistories', [AdminController::class, 'getLoginHistories'])->name('get_loginHistories');
         Route::get('coupon-count', [AdminController::class, 'getCouponCount'])->name('get_coupon_count');
 
         Route::post('qr-code-bulk-update', [QRCodeItemController::class, 'bulkUpdate'])->name('qr-codes.bulk-update');

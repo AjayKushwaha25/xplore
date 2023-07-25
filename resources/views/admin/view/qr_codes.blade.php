@@ -117,7 +117,7 @@
             stateSave: true,
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.qr_code_lists', ['reward_id'=>request()->get('reward_id')]) }}",
+            ajax: "{!! route('admin.qr_code_lists', ['reward_id'=>request()->get('reward_id'),'wd_code'=>request()->get('wd_code')]) !!}",
             columns: [
                 { data: 'serial_number', name: 'serial_number' },
                 { data: 'wd.code', name: 'wd.code'},

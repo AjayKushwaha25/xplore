@@ -17,4 +17,7 @@ class Retailer extends Authenticatable
         'whatsapp_number',
         'upi_id',
     ];
+    public function loginHistories() {
+        return $this->hasMany(LoginHistory::class);
+    }
 }

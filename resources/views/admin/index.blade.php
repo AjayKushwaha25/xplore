@@ -3,6 +3,9 @@
 @section('title', 'Dashboard')
 
 @section('style')
+.city{
+float-left;
+}
 @endsection
 
 @section('content')
@@ -11,52 +14,67 @@
 <!-- ============================================================== -->
 <div class="main-content">
 
-	<div class="page-content">
-		<div class="container-fluid">
+    <div class="page-content">
+        <div class="container-fluid">
 
-			<!-- start page title -->
-			<div class="row">
-				<div class="col-12">
-					<div class="page-title-box d-sm-flex align-items-center justify-content-between">
-						<h4 class="mb-sm-0 font-size-18">Dashboard</h4>
-					</div>
-				</div>
-			</div>
-			<!-- end page title -->
-
-			<div class="row">
-				<div class="col-xl-4">
-					<div class="card overflow-hidden">
-						<div class="bg-primary bg-soft">
-							<div class="row">
-								<div class="col-7">
-									<div class="text-primary p-3">
-										<h5 class="text-primary">Welcome Back !</h5>
-										<p>{{ config('constants.APP_NAME') }}</p>
-									</div>
-								</div>
-								<div class="col-5 align-self-end">
-									<img src="{{ asset('admin/images/banners/profile-img.png') }}" alt="" class="img-fluid">
-								</div>
-							</div>
-						</div>
-						<div class="card-body pt-0">
-							<div class="row">
-								<div class="col-sm-8">
-									<div class="avatar-md profile-user-wid mb-4">
-										<img src="{{ asset('admin/images/admin-profile.png') }}" alt="" class="img-thumbnail rounded-circle">
-									</div>
-									<h5 class="font-size-15 text-truncate">{{ Auth::user()->name }}</h5>
-									{{-- <p class="text-muted mb-0 text-truncate">{{ Auth::user()->roles->first()->name }}</p> --}}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-xl-8">
-					<div class="row">
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0 font-size-18">Dashboard</h4>
+                    </div>
+                </div>
+                <div class="col-md-3 city">
+                    <div class="mb-3">
+                    <form>
+                        <select name="city" id="city" class="form-select select2 " required="">
+                            <option value="{{ route('admin.home',['wd_code'=>'all']) }}" {{ request()->get('wd_code')=='all' || request()->get('wd_code')==null ? 'selected' : '' }}>-- all --</option>
+                            @foreach($data['wd_city_list'] as $wd_city_list)
+                            <option value="{{ route('admin.home',['wd_code'=>$wd_city_list->code]) }}" {{ $wd_city_list->code==request()->get('wd_code') ? 'selected' : '' }}>{{ $wd_city_list->city->name }}({{ $wd_city_list->code}})</option>
+                            @endforeach
+                        </select>
+                    </form>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+           
+            <div class="row">
+                <div class="col-xl-4">
+                    <div class="card overflow-hidden">
+                        <div class="bg-primary bg-soft">
+                            <div class="row">
+                                <div class="col-7">
+                                    <div class="text-primary p-3">
+                                        <h5 class="text-primary">Welcome Back !</h5>
+                                        <p>{{ config('constants.APP_NAME') }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-5 align-self-end">
+                                    <img src="{{ asset('admin/images/banners/profile-img.png') }}" alt=""
+                                        class="img-fluid">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="avatar-md profile-user-wid mb-4">
+                                        <img src="{{ asset('admin/images/admin-profile.png') }}" alt=""
+                                            class="img-thumbnail rounded-circle">
+                                    </div>
+                                    <h5 class="font-size-15 text-truncate">{{ Auth::user()->name }}</h5>
+                                    {{-- <p class="text-muted mb-0 text-truncate">{{ Auth::user()->roles->first()->name }}
+                                    </p> --}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-8">
+                    <div class="row">
                         <div class="col-md-4">
-                            <a href="{{ route('admin.qr-codes.index') }}">
+                            <a href="{{ route('admin.qr-codes.index', ['wd_code'=>request()->get('wd_code')]) }}">
                                 <div class="card mini-stats-wid">
                                     <div class="card-body">
                                         <div class="d-flex">
@@ -82,15 +100,15 @@
                         </div>
                         @foreach($data['coupons'] as $coupon)
                         <div class="col-md-{{ 12/min(count($data['coupons']), 3) }}">
-                            <a href="{{ route('admin.qr-codes.index', ['reward_id'=>$coupon->id]) }}">
+                            <a href="{{ route('admin.qr-codes.index', ['reward_id'=>$coupon->id,'wd_code'=>request()->get('wd_code')]) }}">
                                 <div class="card mini-stats-wid">
                                     <div class="card-body">
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium mb-1">₹ {{ $coupon->value }} Coupons</p>
                                                 <h5 class="mb-0">
-                                                    <span  id="countRedeemedCoupon{{ $coupon->value }}">0</span> | 
-                                                    <span  id="countCoupon{{ $coupon->value }}">0</span>
+                                                    <span id="countRedeemedCoupon{{ $coupon->value }}">0</span> |
+                                                    <span id="countCoupon{{ $coupon->value }}">0</span>
                                                 </h5>
                                             </div>
 
@@ -107,13 +125,13 @@
                             </a>
                         </div>
                         @endforeach
-					</div>
-					<!-- end row -->
-				</div>
-			</div>
+                    </div>
+                    <!-- end row -->
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-3">
-                    <a href="{{ route('admin.retailers.index',['filter-by-date' => 'today']) }}">
+                    <a href="{{ route('admin.retailers.index',['filter-by-date' => 'today','wd_code'=>request()->get('wd_code')]) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -135,7 +153,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="{{ route('admin.retailers.index',['filter-by-date' => 'last7days']) }}">
+                    <a href="{{ route('admin.retailers.index',['filter-by-date' => 'last7days','wd_code'=>request()->get('wd_code')]) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -157,7 +175,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="{{ route('admin.retailers.index',['filter-by-date' => 'last30days']) }}">
+                    <a href="{{ route('admin.retailers.index',['filter-by-date' => 'last30days','wd_code'=>request()->get('wd_code')]) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -179,7 +197,7 @@
                     </a>
                 </div>
                 <div class="col-md-3">
-                    <a href="{{ route('admin.retailers.index',['filter-by-date' => 'last90days']) }}">
+                    <a href="{{ route('admin.retailers.index',['filter-by-date' => 'last90days','wd_code'=>request()->get('wd_code')]) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -205,7 +223,7 @@
 
             <div class="row">
                 <div class="col-md-3">
-                    <a href="{{ route('admin.login-histories') }}">
+                    <a href="{{ route('admin.login-histories',['wd_code'=>request()->get('wd_code')]) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -229,7 +247,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    <a href="{{route('admin.payouts.index',['status' => 'success']) }}">
+                    <a href="{{route('admin.payouts.index',['status' => 'success','wd_code'=>request()->get('wd_code')]) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -251,9 +269,9 @@
                         </div>
                     </a>
                 </div>
-                
+
                 <div class="col-md-3">
-                    <a href="{{ route('admin.payouts.index',['status' => 'pending']) }}">
+                    <a href="{{ route('admin.payouts.index',['status' => 'pending','wd_code'=>request()->get('wd_code')]) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -277,7 +295,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    <a href="{{ route('admin.payouts.index',['status' => 'failed']) }}">
+                    <a href="{{ route('admin.payouts.index',['status' => 'failed','wd_code'=>request()->get('wd_code')]) }}">
                         <div class="card mini-stats-wid">
                             <div class="card-body">
                                 <div class="d-flex">
@@ -322,7 +340,8 @@
                                     @foreach($data['scannedHistories'] as $scannedHistory)
                                     <tr>
                                         <td>
-                                            <a href="{{ route('admin.retailers.show',['retailer' => $scannedHistory->retailer_id]) }}">
+                                            <a
+                                                href="{{ route('admin.retailers.show',['retailer' => $scannedHistory->retailer_id]) }}">
                                                 {{ $scannedHistory->retailer->name }}
                                             </a>
                                         </td>
@@ -350,17 +369,18 @@
                             </h4>
                             <table id="datatable" class="table table-bordered dt-responsive  nowrap w-100">
                                 <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Mobile Number</th>
-                                    <th>Count</th>
-                                </tr>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Mobile Number</th>
+                                        <th>Count</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($data['topScannedUsers'] as $topScannedUser)
                                     <tr>
                                         <td>
-                                            <a href="{{ route('admin.retailers.show',['retailer' => $topScannedUser['retailerId']]) }}">
+                                            <a
+                                                href="{{ route('admin.retailers.show',['retailer' => $topScannedUser['retailerId']]) }}">
                                                 {{ $topScannedUser['name'] }}
                                             </a>
                                         </td>
@@ -375,82 +395,141 @@
                     </div>
                 </div>
             </div>
-			<!-- end row -->
-		</div>
-		<!-- End Page-content -->
-	</div>
+            <!-- end row -->
+        </div>
+        <!-- End Page-content -->
+    </div>
 </div>
 @endsection
 
 @section('script')
 <script>
+// user count
 
-    // user count
-    $(function() {
-        function getUserCount(range, container) {
-            $.ajax({
-                url: "{{ route('admin.retailer_count',['range'=>'']) }}"+range,
-                dataType: 'json',
-                success: function(data) {
-                    $(container).text(data.count);
-                }
-            });
-        }
+$(function() {
 
-        getUserCount('today', '#retailer-count-today');
-        getUserCount('last7days', '#retailer-count-last7days');
-        getUserCount('last30days', '#retailer-count-last30days');
-        getUserCount('last90days', '#retailer-count-last90days');
-        setInterval(function() {
-            getUserCount('today', '#retailer-count-today');
-            getUserCount('last7days', '#retailer-count-last7days');
-            getUserCount('last30days', '#retailer-count-last30days');
-            getUserCount('last90days', '#retailer-count-last90days');
-        }, 10000);
+    const queryString = window.location.search;
+    // console.log(queryString);
+    let wd_code = queryString.slice(9, 15);
+    console.log(wd_code);
+
+    // var wdCode = document.getElementById('city').value;
+   
+
+  
+
+    function getUserCount(range, container, wd_code) {
+        $.ajax({
+            url: "{{ route('admin.retailer_count',['range'=>'']) }}" + range,
+            method: 'GET',
+            data: {
+                'wd_code': wd_code,
+                '_token': "{{ csrf_token() }}"
+            },
+            dataType: 'json',
+            success: function(data) {
+                $(container).text(data.count);
+            }
+        });
+    }
+
+    getUserCount('today', '#retailer-count-today',wd_code);
+    getUserCount('last7days', '#retailer-count-last7days',wd_code);
+    getUserCount('last30days', '#retailer-count-last30days',wd_code);
+    getUserCount('last90days', '#retailer-count-last90days',wd_code);
+    setInterval(function() {
+        getUserCount('today', '#retailer-count-today',wd_code);
+        getUserCount('last7days', '#retailer-count-last7days',wd_code);
+        getUserCount('last30days', '#retailer-count-last30days',wd_code);
+        getUserCount('last90days', '#retailer-count-last90days',wd_code);
+    }, 10000);
+
+
+// payout count
+
+    // $('#city').change(function() {
+    
+    
+    function getPayoutCount(status, container, wd_code) {
+        
+       
+        $.ajax({
+            // url: "{{ route('admin.payout_count',['status'=>'']) }}" + status,
+            url: "{{ route('admin.payout_count') }}",
+            method: 'GET',
+            data: {
+                'status': status,
+                'wd_code': wd_code,
+                '_token': "{{ csrf_token() }}"
+            },
+            dataType: 'json',
+            success: function(data) {
+                // console.log(data.payoutamount);
+                $(container).text(data.payoutamount);
+            }
+        });
+    }
+
+    getPayoutCount('success', '#success_payout',wd_code);
+    getPayoutCount('pending', '#pending_payout',wd_code);
+    getPayoutCount('failed', '#failed_payouts',wd_code);
+    getPayoutCount('total', '#total_payout',wd_code);
+    setInterval(function() {
+        getPayoutCount('success', '#success-payout',wd_code);
+        getPayoutCount('pending', '#pending_payout',wd_code);
+        getPayoutCount('failed', '#failed_payouts',wd_code);
+        getPayoutCount('total', '#total_payout',wd_code);
+    }, 10000);
+
+
+
+
+    function getCouponCount(wd_code) {
+        $.ajax({
+            url: "{{ route('admin.get_coupon_count') }}",
+            method: 'GET',
+            data: {
+                'wd_code': wd_code,
+                '_token': "{{ csrf_token() }}"
+            },
+            dataType: 'json',
+            success: function(data) {
+                $.each(data.couponCounts, function(key, value) {
+                    $("#" + key).text(value);
+                });
+            }
+        });
+    }
+
+    getCouponCount(wd_code);
+    setInterval(function() {
+        // getCouponCount(wd_id);
+    }, 10000);
+
+
+
+    $('#city').change(function() {
+        var url = document.getElementById('city').value;
+       
+        if (url) { // require a URL
+              window.location = url; // redirect
+          }
+          return false;
+
+        getUserCount('today', '#retailer-count-today',wd_code);
+    getUserCount('last7days', '#retailer-count-last7days',wd_code);
+    getUserCount('last30days', '#retailer-count-last30days',wd_code);
+    getUserCount('last90days', '#retailer-count-last90days',wd_code);
+
+        getCouponCount(wd_code);
+
+        getPayoutCount('success', '#success-payout',wd_code);
+        getPayoutCount('pending', '#pending_payout',wd_code);
+        getPayoutCount('failed', '#failed_payouts',wd_code);
+        getPayoutCount('total', '#total_payout',wd_code);
     });
+});
 
-    // payout count
-    $(function() {
-        function getPayoutCount(status, container) {
-            $.ajax({
-                url: "{{ route('admin.payout_count',['status'=>'']) }}"+status,
-                dataType: 'json',
-                success: function(data) {
-                    $(container).text(data.payoutamount);
-                }
-            });
-        }
 
-        getPayoutCount('success', '#success_payout');
-        getPayoutCount('pending', '#pending_payout');
-        getPayoutCount('failed', '#failed_payouts');
-        getPayoutCount('total', '#total_payout');
-        setInterval(function() {
-            getPayoutCount('success', '#success-payout');
-            getPayoutCount('pending', '#pending_payout');
-            getPayoutCount('failed', '#failed_payouts');
-            getPayoutCount('total', '#total_payout');
-        }, 10000);
-    });
-
-    $(function() {
-        function getCouponCount() {
-            $.ajax({
-                url: "{{ route('admin.get_coupon_count') }}",
-                dataType: 'json',
-                success: function(data) {
-                    console.log(data.couponCounts)
-                    $.each(data.couponCounts, function(key,value){
-                        $("#"+key).text(value);
-                    });
-                }
-            });
-        }
-
-        getCouponCount();
-        setInterval(function() {
-            getCouponCount();
-        }, 10000);
-    });
 </script>
 @endsection
