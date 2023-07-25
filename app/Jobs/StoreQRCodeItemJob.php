@@ -18,7 +18,8 @@ class StoreQRCodeItemJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = null; // Set the timeout to unlimited
+    // public $tries = null;
+    public $timeout = 3600; // Set the timeout to unlimited
     protected $data;
 
     /**
