@@ -122,9 +122,8 @@ class StoreQRCodeItemJob implements ShouldQueue
                         'abbr' => $abbr,
                         'status' => 1
                     ]);
-
-                    WD::whereCode($wd->code)->update(['city_id' => $city->id]);
                 }
+                WD::whereCode($wd->code)->update(['city_id' => $city->id]);
 
                 /* Coupon Code is in serial thats why below code */
                 $_50 = (int) ceil($serial_number * 0.9);
