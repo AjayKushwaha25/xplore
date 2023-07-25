@@ -192,9 +192,9 @@ class QRCodeItemController extends Controller
 
     public function generateBulkQRCode()
     {
-        $qrCodeItems = QRCodeItem::with('rewardItem:id,value')
+        $qrCodeItems = QRCodeItem::with(['rewardItem:id,value','wd:id,code'])
                     ->where('is_qr_code_generated',0)
-                    ->select('id','url','path','serial_number','reward_item_id','coupon_code','is_qr_code_generated')
+                    ->select('id','url','path','serial_number','reward_item_id','coupon_code','is_qr_code_generated','wd_id')
                     ->get();
         // dd($qrCodeItems->count());
         $chunkSize = 50;

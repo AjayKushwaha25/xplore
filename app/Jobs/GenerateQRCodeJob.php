@@ -74,7 +74,7 @@ class GenerateQRCodeJob implements ShouldQueue
                     $font->valign('bottom');
                 });
 
-                $back->text($qrCodeItem->serial_number, 109, 90, function($font) {
+                $back->text("{$qrCodeItem->wd->code}-{$qrCodeItem->serial_number}", 109, 90, function($font) {
                     $font->file(public_path('fonts/Poppins-SemiBold.ttf'));
                     $font->size(26);
                     $font->color('#2C3689');
