@@ -73,7 +73,7 @@
             stateSave: true,
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.login_history_lists') }}",
+            ajax: "{!! route('admin.login_history_lists', ['wd_code'=>request()->get('wd_code')]) !!}",
             columns: [
                 { data: 'retailer.name', name: 'retailer.name' ,
                     render : function(data, type, row) {

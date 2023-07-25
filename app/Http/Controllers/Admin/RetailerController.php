@@ -26,7 +26,25 @@ class RetailerController extends Controller
 
     public function retailersList(Request $request){
 
-        $query = Retailer::query();
+        $wd_code = $request->get('wd_code');
+        // dd($wd_code);
+        if($wd_code == "all" || $wd_code == null){
+            $query = Retailer::query();
+            }
+        else{
+             $query = Retailer::with([
+                    'loginHistories:id,retailer_id,q_r_code_item_id',
+                    'loginHistories.qRCodeItem:id,wd_id',
+                    ])
+                    ->whereHas('loginHistories.qRCodeItem.wd',function ($query) use ($wd_code){
+                        $query->where('code', $wd_code);
+                    })
+                    ->select('id','name','mobile_number','whatsapp_number','upi_id','created_at')
+                    ->get();
+            }
+
+      
+        // $query = Retailer::query();
         $filterByDate = $request->get('filter-by-date');
         $today = now()->startOfDay();
 
@@ -124,8 +142,24 @@ class RetailerController extends Controller
 
     /* Extra */
     public function getRetailerCount(Request $request)
-    {
+    {  
+        $wd_code = $request->get('wd_code');
+        
+        if($wd_code == "all" || $wd_code == null){
         $query = Retailer::query();
+        }
+        else{
+            $query = Retailer::with([
+                'loginHistories:id,retailer_id,q_r_code_item_id',
+                'loginHistories.qRCodeItem:id,wd_id',
+                ])
+                ->whereHas('loginHistories.qRCodeItem.wd',function ($query) use ($wd_code){
+                    $query->where('code', $wd_code);
+                })
+                ->select('id','name','mobile_number','whatsapp_number','upi_id','created_at')
+                ->get();
+        }
+
         $range = $request->get('range');
         $today = now()->startOfDay();
 

@@ -29,15 +29,30 @@ class QRCodeItemController extends Controller
     }
 
     public function qrCodesList(Request $request){
+        $wd_code = $request->get('wd_code');
         $rewardId = $request->reward_id;
+
+        if($wd_code == "all" || $wd_code == null){
+            $qrCodeItems = QRCodeItem::query()->whereHas('rewardItem',function($query) use ($rewardId){
+                $query->when($rewardId, function($query) use ($rewardId){
+                    $query->whereId($rewardId);
+                    $query->select('id','value');
+                });
+            })
+            ->with(['rewardItem:id,value']);
+        }
+        else{
         $qrCodeItems = QRCodeItem::query()->whereHas('rewardItem',function($query) use ($rewardId){
                                     $query->when($rewardId, function($query) use ($rewardId){
                                         $query->whereId($rewardId);
                                         $query->select('id','value');
                                     });
                                 })
+                                ->whereHas('wd',function ($query) use ($wd_code){
+                                    $query->where('code', $wd_code);
+                                })   
                                 ->with(['rewardItem:id,value']);
-
+                            }
         return Datatables::of($qrCodeItems)->make(true);
     }
 

@@ -78,7 +78,7 @@
             stateSave: true,
             processing: true,
             serverSide: true,
-            ajax: "{{ route('admin.retailer_lists', ['filter-by-date'=>request()->get('filter-by-date')]) }}",
+            ajax: "{!! route('admin.retailer_lists', ['filter-by-date'=>request()->get('filter-by-date'),'wd_code'=>request()->get('wd_code')]) !!}",
             columns: [
                 { data: 'name', name: 'name' },
                 { data: 'mobile_number', name: 'mobile_number' },
