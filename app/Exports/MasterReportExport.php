@@ -40,8 +40,8 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
             $loginHistory['redeemed']!==0 ? $loginHistory['redeemed'] : '0',
             $loginHistory['percentage']!==0 ? $loginHistory['percentage'] : '0',
             $loginHistory['totalRetailers']!==0 ? $loginHistory['totalRetailers'] : '0',
-            '',
-            '',
+            $loginHistory['moreThan2Count']!==0 ? $loginHistory['moreThan2Count'] : '0',
+            $loginHistory['moreThan5Count']!==0 ? $loginHistory['moreThan5Count'] : '0',
         ];
     }
 
@@ -114,80 +114,80 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
     */
     public function collection()
     {
-        $wd = \App\Models\WD::with([
-            'city:id,name'
-        ])
-        ->get(['code', 'city_id']);
-
-        $totalQRCode = \App\Models\QRCodeItem::with([
-            'wd:id,code,city_id',
-            'wd.city:id,name'
-        ])
-        ->select('id', 'wd_id', 'is_redeemed')
-        ->get()
-        ->groupBy(function ($item) {
-            return $item['wd']['code'];
-        })
-        ->map(function ($group) {
-            $total = count($group);
-            $redeemed = $group->where('is_redeemed', 1)->count();
-            $cityName = $group->first()['wd']['city']['name'];
-            $percentage = $total > 0 ? ($redeemed / $total) : 0; // Calculate percentage
-            return [
-                'city' => $cityName,
-                'total' => $total,
-                'redeemed' => $redeemed,
-                'percentage' => $percentage
-            ];
-        })
-        ->toArray();
-
-
-        $data = \App\Models\LoginHistory::join('q_r_code_items', 'login_histories.q_r_code_item_id', '=', 'q_r_code_items.id')
-            ->join('wd', 'q_r_code_items.wd_id', '=', 'wd.id')
-            ->join('cities', 'wd.city_id', '=', 'cities.id')
-            ->whereBetween('login_histories.created_at', [$this->startDate, $this->endDate])
+        $mergedData = \App\Models\WD::leftJoin('cities', 'wd.city_id', '=', 'cities.id')
+            ->leftJoin('q_r_code_items', 'wd.id', '=', 'q_r_code_items.wd_id')
+            ->leftJoin('login_histories', 'q_r_code_items.id', '=', 'login_histories.q_r_code_item_id')
             ->select(
+                'wd.id',
                 'wd.code',
                 'cities.name AS city',
                 \DB::raw('COUNT(DISTINCT login_histories.retailer_id) AS totalRetailers'),
-                \DB::raw('SUM(q_r_code_items.is_redeemed) AS redeemed')
+                \DB::raw('SUM(q_r_code_items.is_redeemed) AS redeemed'), // Use the correct column name
+                \DB::raw('(SELECT COUNT(id) FROM q_r_code_items qr WHERE qr.wd_id = wd.id) AS total')
             )
-            ->groupBy('q_r_code_items.wd_id', 'wd.code', 'cities.name')
+            ->groupBy('wd.id', 'wd.code', 'cities.name')
+            ->with('qRCodeItems:id,wd_id')
+            ->oldest('wd.created_at')
             ->get()
+            ->map(function ($item) {
+                $total = $item->total;
+                $redeemed = $item->redeemed;
+                $percentage = $total > 0 ? ($redeemed / $total) : 0;
+                $formattedPercentage = number_format($percentage * 100, 2);
+
+                return [
+                    $item->code => [
+                        'city' => $item->city,
+                        'code' => $item->code,
+                        'total' => $total,
+                        'redeemed' => $redeemed,
+                        'percentage' => $formattedPercentage . '%',
+                        'totalRetailers' => $item->totalRetailers ?? 0,
+                        'moreThan2Count' => 0,
+                        'moreThan5Count' => 0,
+                    ]
+                ];
+            })
+            ->collapse()
             ->toArray();
 
-        // Merge the two queries
-        $mergedData = [];
-        foreach ($wd as $wdItem) {
-            $code = $wdItem['code'];
-            $mergedItem = [
-                'code' => $code,
-                'city' => $wdItem['city']['name'] ?? 'Unknown City',
-                'total' => '0',
-                'redeemed' => '0',
-                'percentage' => '0%',
-                'totalRetailers' => '0'
+        $loginHistories = \App\Models\LoginHistory::with([
+            'retailer:id',
+            'qRCodeItem:id,wd_id',
+            'qRCodeItem.wd:id,code'
+        ])
+        ->select('id', 'retailer_id', 'q_r_code_item_id', 'created_at')
+        ->get()
+        ->groupBy('qRCodeItem.wd.code') // Grouping by wd code
+        ->map(function ($histories, $wdCode) {
+            $retailerData = $histories->groupBy('retailer_id')->map(function ($retailerHistories) {
+                return $retailerHistories->count();
+            });
+            return $retailerData;
+        });
+
+
+        $retailersWithQtyWiseCount = $loginHistories->map(function ($wdData) {
+            $moreThan2Count = $wdData->filter(function ($counts) {
+                return $counts >= 2;
+            })->count();
+
+            $moreThan5Count = $wdData->filter(function ($counts) {
+                return $counts >= 5;
+            })->count();
+
+            return [
+                "moreThan2Count" => $moreThan2Count,
+                "moreThan5Count" => $moreThan5Count,
             ];
+        })->toArray();
 
-            // Find the matching item in the $data array
-            $matchingItem = null;
-            foreach ($data as $item) {
-                if ($item['code'] === $code) {
-                    $matchingItem = $item;
-                    break;
-                }
+        foreach ($loginHistories as $wdCode => $wdData) {
+            if (isset($mergedData[$wdCode])) {
+                $counts = $retailersWithQtyWiseCount[$wdCode];
+                $mergedData[$wdCode]['moreThan2Count'] = $counts['moreThan2Count'];
+                $mergedData[$wdCode]['moreThan5Count'] = $counts['moreThan5Count'];
             }
-
-            if ($matchingItem !== null) {
-                $mergedItem = array_merge($mergedItem, $matchingItem);
-            }
-
-            if (isset($totalQRCode[$code])) {
-                $mergedItem = array_merge($mergedItem, $totalQRCode[$code]);
-            }
-
-            $mergedData[] = $mergedItem;
         }
 
 return collect($mergedData);

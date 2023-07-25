@@ -27,14 +27,15 @@ class ValidVPA implements Rule
      */
     public function passes($attribute, $value)
     {
-        // dd($this->paymentMode);
         // UPI ID validation logic
         $isUpiId = preg_match('/^([a-zA-Z0-9]+)([\.{1}])?([a-zA-Z0-9]+)\@?(paytm|okicici|oksbi|okaxis|okhdfcbank|ybl|upi|axl)+$/', $value);
 
         // Phone number validation logic
-        $isPhoneNumber = preg_match('/^[6-9]\d{9}$/', $value);
+        /*$isPhoneNumber = preg_match('/^[6-9]\d{9}$/', $value);
 
-        return $isUpiId || $isPhoneNumber;
+        return $isUpiId || $isPhoneNumber;*/
+
+        return $isUpiId;
     }
 
     /**
