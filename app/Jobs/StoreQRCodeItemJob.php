@@ -42,7 +42,7 @@ class StoreQRCodeItemJob implements ShouldQueue
         try{
             \DB::transaction(function () {
                 $code = $this->data['code'];
-                $firm_name = $this->data['firm_name'];
+                $firm_name = $this->data['firm_name'] ?? 'NA';
                 $cityName = $this->data['city'];
                 $serial_number = $this->data['serial_number'];
 
