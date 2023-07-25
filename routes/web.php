@@ -17,6 +17,10 @@ use App\Http\Controllers\Admin\{UserController, BackendController, AdminControll
 */
 
 Route::post('loginhistorymodal', [PagesController::class, 'getLoginHistoryModalData'])->name('history_modal');
+Route::get('qrcode-gen', function(){
+    $generated = \App\Models\QRCodeItem::where('is_qr_code_generated',1)->count();
+    return $generated - 7512;
+});
 Route::get('qrcode-count', function() {
     $wds = [
         'NG3160',
