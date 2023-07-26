@@ -129,6 +129,13 @@ $publicPath = public_path($path);
                         <input type="submit" name="submit" value="Generate QR Code">
                     </form>
                 </div>
+
+                <div class="col-md-12">
+                    <form action="{{ route('admin.qr-codes.generate-qrcode-by-wd',['wd' => 'NG3054']) }}" method="POST">
+                        @csrf
+                        <input type="submit" name="submit" value="Generate QR Code">
+                    </form>
+                </div>
             </div>
 
             <br>
