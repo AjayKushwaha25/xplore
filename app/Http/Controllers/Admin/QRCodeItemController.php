@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\{StoreQRCodeItemRequest, UpdateQRCodeItemRequest, ImportRequest};
-use App\Models\QRCodeItem;
+use App\Models\{QRCodeItem,WD};
 use App\Imports\{QRCodeImport,BulkQRCodeImport};
 use Maatwebsite\Excel\Facades\Excel;
 use DataTables;
