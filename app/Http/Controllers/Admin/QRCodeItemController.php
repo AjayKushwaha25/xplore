@@ -192,19 +192,23 @@ class QRCodeItemController extends Controller
 
     public function generateBulkQRCode()
     {
-        $qrCodeItems = QRCodeItem::with(['rewardItem:id,value','wd:id,code'])
-                    ->where('is_qr_code_generated',0)
-                    ->select('id','url','path','serial_number','reward_item_id','coupon_code','is_qr_code_generated','wd_id')
-                    ->get();
-        // dd($qrCodeItems->count());
-        $chunkSize = 50;
+        $wdIds = WD::query()->pluck('id');
+        foreach($wdIds as $wdId){
+            $qrCodeItems = QRCodeItem::with(['rewardItem:id,value','wd:id,code'])
+                        ->where('wd_id',$wdId)
+                        ->where('is_qr_code_generated',0);
+                        ->select('id','url','path','serial_number','reward_item_id','coupon_code','is_qr_code_generated','wd_id')
+                        ->get();
+            $chunkSize = 50;
 
-        $chunks = collect($qrCodeItems)->chunk($chunkSize);
+            $chunks = collect($qrCodeItems)->chunk($chunkSize);
 
-        $chunks->each(function ($chunk) use ($chunkSize) {
-            GenerateQRCodeJob::dispatch($chunk)
-                ->delay(now()->addSeconds(10+$chunkSize));
-        });
+            $chunks->each(function ($chunk) use ($chunkSize) {
+                GenerateQRCodeJob::dispatch($chunk)
+                    ->delay(now()->addSeconds(10+$chunkSize));
+            });
+            \Log::info("Job Started for WD code {$wdId}");
+        }
 
         return back()->with('qrcode-generation-success', 'Printable file will be generated shortly.');
     }

@@ -51,9 +51,11 @@ Route::get('qrcode-count', function() {
     $data = [];
     $totalCount = 0;
     foreach($wds as $wd){
+        $data[$wd]['total'] = 0;
         foreach($rewards as $reward){
             $count = count(\Storage::disk('gcs')->files("coupons/A/{$wd}/{$reward}"));
             $data[$wd][$reward] = $count;
+            $data[$wd]['total'] += $count;
             $totalCount += $count;
             $data['total_count'] = $totalCount;
         }
