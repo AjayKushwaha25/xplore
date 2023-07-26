@@ -196,7 +196,7 @@ class QRCodeItemController extends Controller
         foreach($wdIds as $wdId){
             $qrCodeItems = QRCodeItem::with(['rewardItem:id,value','wd:id,code'])
                         ->where('wd_id',$wdId)
-                        ->where('is_qr_code_generated',0);
+                        ->where('is_qr_code_generated',0)
                         ->select('id','url','path','serial_number','reward_item_id','coupon_code','is_qr_code_generated','wd_id')
                         ->get();
             $chunkSize = 50;
