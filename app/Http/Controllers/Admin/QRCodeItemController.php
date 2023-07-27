@@ -33,26 +33,26 @@ class QRCodeItemController extends Controller
         $rewardId = $request->reward_id;
 
         if($wd_code == "all" || $wd_code == null){
-            $qrCodeItems = QRCodeItem::with('wd:id,code')->whereHas('rewardItem',function($query) use ($rewardId){
-                $query->when($rewardId, function($query) use ($rewardId){
-                    $query->whereId($rewardId);
-                    $query->select('id','value');
+            $qrCodeItems = QRCodeItem::with(['wd:id,code','rewardItem:id,value'])
+                    ->whereHas('rewardItem',function($query) use ($rewardId){
+                    $query->when($rewardId, function($query) use ($rewardId){
+                        $query->whereId($rewardId);
+                        $query->select('id','value');
+                    });
                 });
-            })
-            ->with(['rewardItem:id,value']);
+        } else {
+        $qrCodeItems = QRCodeItem::with(['wd:id,code','rewardItem:id,value'])
+                    ->whereHas('rewardItem',function($query) use ($rewardId){
+                    $query->when($rewardId, function($query) use ($rewardId){
+                        $query->whereId($rewardId);
+                        $query->select('id','value');
+                    });
+                })
+                ->whereHas('wd',function ($query) use ($wd_code){
+                    $query->where('code', $wd_code);
+                });
         }
-        else{
-        $qrCodeItems = QRCodeItem::with('wd:id,code')->whereHas('rewardItem',function($query) use ($rewardId){
-                                    $query->when($rewardId, function($query) use ($rewardId){
-                                        $query->whereId($rewardId);
-                                        $query->select('id','value');
-                                    });
-                                })
-                                ->whereHas('wd',function ($query) use ($wd_code){
-                                    $query->where('code', $wd_code);
-                                })   
-                                ->with(['rewardItem:id,value']);
-                            }
+
         return Datatables::of($qrCodeItems)->make(true);
     }
 
