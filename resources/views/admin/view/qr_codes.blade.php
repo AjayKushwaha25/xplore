@@ -72,6 +72,7 @@
                                         <th>Serial Number</th>
                                         <th>URL</th>
                                         <th>WD Code</th>
+                                        <th>Coupon Code</th>
                                         <th>Coupon</th>
                                         <th>Reward Amount</th>
                                         <th>Is Redeemed?</th>
@@ -120,13 +121,14 @@
             ajax: "{!! route('admin.qr_code_lists', ['reward_id'=>request()->get('reward_id'),'wd_code'=>request()->get('wd_code')]) !!}",
             columns: [
                 { data: 'serial_number', name: 'serial_number' },
-                { data: 'wd.code', name: 'wd.code'},
                 { data: 'url', name: 'url' ,
                     render : function(data, type, row) {
                         url = row.url;
                         return '<a href="'+url+'" target="_blank">Link</a>';
                     }
                 },
+                { data: 'wd.code', name: 'wd.code'},
+                { data: 'coupon_code', name: 'coupon_code'},
                 { data: 'path', name: 'path' ,
                     render : function(data, type, row) {
                         var imgURL = "{{ config('app.env')=='local' ? asset('storage/:filename') : config('constants.CDN_URL').storage_disk()->path(':filename') }}".replace(':filename', row.path);
