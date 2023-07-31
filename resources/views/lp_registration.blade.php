@@ -67,9 +67,7 @@
             </div>
 
             <div class="text-center mt-4">
-                <input type="hidden" name="uid" value="{{ $qrcodeId ?? '' }}">
                 <button type="submit" class="bg-color">GENERATE CODE</button>
-                <!-- <p class="mt-1">Already have account? <a class="link" href="{{ route('login',['uid' => $qrcodeId ?? '']) }}"> LOGIN</a></p> -->
             </div>
         </form>
     </div>

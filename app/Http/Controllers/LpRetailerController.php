@@ -60,7 +60,13 @@ class LpRetailerController extends Controller
 
         $couponCodeValue = CouponCode::with('rewardItem:id,value')->where('is_redeemed', 0)->inRandomOrder()->first(['id','code','reward_item_id']);
 
-            
+        if(!$couponCodeValue){
+            return back()->with([
+                'status' => 'failed',
+                'message' => 'Coupon Code does not exists.'
+            ])->withInput();
+        }
+
         $rewardValue = $couponCodeValue->rewardItem->value;
 
         $retailer->couponCodes()->attach($couponCodeValue->id);
