@@ -15,4 +15,9 @@ class City extends Model
         'abbr',
         'status'
     ];
+
+    public function wds()
+    {
+        return $this->hasMany(WD::class);
+    }
 }

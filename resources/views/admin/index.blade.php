@@ -30,7 +30,12 @@ float-left;
                         <select name="city" id="city" class="form-select select2 " required="">
                             <option value="{{ route('admin.home',['wd_code'=>'all']) }}" {{ request()->get('wd_code')=='all' || request()->get('wd_code')==null ? 'selected' : '' }}>-- all --</option>
                             @foreach($data['wd_city_list'] as $wd_city_list)
-                            <option value="{{ route('admin.home',['wd_code'=>$wd_city_list->code]) }}" {{ $wd_city_list->code==request()->get('wd_code') ? 'selected' : '' }}>{{ $wd_city_list->city ? $wd_city_list->city->name : '' }} ({{ $wd_city_list->code}})</option>
+                            @foreach($wd_city_list->wds as $wd)
+                                <option value="{{ route('admin.home',['wd_code'=>$wd->code]) }}"
+                                    {{ $wd->code==request()->get('wd_code') ? 'selected' : '' }}>
+                                    {{ $wd_city_list->name ? $wd_city_list->name : '' }} ({{ $wd->code}})
+                                </option>
+                            @endforeach
                             @endforeach
                         </select>
                     </form>

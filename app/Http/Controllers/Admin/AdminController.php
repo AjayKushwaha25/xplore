@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Validator, Storage};
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Str;
-use App\Models\{LoginHistory, User, Role, RewardItem, WD};
+use App\Models\{LoginHistory, User, Role, RewardItem, WD, City};
 use DataTables;
 use Carbon\Carbon;
 use File;
@@ -19,11 +19,16 @@ class AdminController extends Controller
 {
     public function index(Request $request){
 
-        $wd_city_list = WD::with([
-            'city:id,name',
-        ])
-        ->select('id','code','city_id')
-        ->get();
+        
+
+        
+        $wd_city_list = City::with(
+            'wds:id,code,city_id',
+            )
+            ->orderBy('name','asc')
+            ->get(['id','name']);
+        
+        // dd($wd_city_list->wds->code);
 
         // dd($wd_city_list);
         $wd_code = $request->get('wd_code');
