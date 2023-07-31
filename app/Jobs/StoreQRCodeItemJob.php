@@ -47,7 +47,7 @@ class StoreQRCodeItemJob implements ShouldQueue
                 $cityName = $this->data['city'];
                 $serial_number = $this->data['serial_number'];
 
-                $mainFolder = "coupons/A";
+                $mainFolder = "coupons/B";
                 $newQRFolder = "{$mainFolder}/{$code}";
 
                 if(!storage_disk()->exists($newQRFolder)) {
