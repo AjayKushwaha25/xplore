@@ -9,9 +9,10 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, WithEvents, WithStyles
 {
-    public function dateRange($startDate,$endDate){
+    public function data($startDate,$endDate,$region){
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->region = $region;
     }
 
     public function headings(): array
@@ -75,6 +76,7 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
     */
     public function collection()
     {
+        $region = $this->region;
         return  LoginHistory::query()
                             ->with([
                                 'retailer:id,name,mobile_number,whatsapp_number,upi_id',
@@ -83,6 +85,9 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
                                 'qRCodeItem.wd:id,code,city_id',
                                 'qRCodeItem.wd.city:id,name'
                             ])
+                            ->whereHas('qRCodeItem.wd.city',function ($query) use ($region){
+                                $query->where('region_id', $region);
+                            })
                             ->select('id','ip_address','retailer_id','q_r_code_item_id','created_at')
                             ->get();
     }

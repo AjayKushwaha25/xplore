@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Auth, Validator, Storage};
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Str;
-use App\Models\{LoginHistory, User, Role, RewardItem, WD, City};
+use App\Models\{LoginHistory, User, Role, RewardItem, WD, City, Region};
 use DataTables;
 use Carbon\Carbon;
 use File;
@@ -28,9 +28,7 @@ class AdminController extends Controller
             ->orderBy('name','asc')
             ->get(['id','name']);
         
-        // dd($wd_city_list->wds->code);
-
-        // dd($wd_city_list);
+    
         $wd_code = $request->get('wd_code');
         // dd($wd_code);
         if($wd_code == "all" || $wd_code == null){
@@ -114,9 +112,13 @@ class AdminController extends Controller
             'master_report'
         ];
 
+        $region = Region::all();
+        // dd($region);
+
         $data = [
             'tables' => $tables,
             'ignoreTables' => CustomHelper::ignoredTables(),
+            'region' => $region,
         ];
 
         return view('admin/export')->with('data',$data);

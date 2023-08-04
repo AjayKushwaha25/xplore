@@ -86,6 +86,22 @@
 	                                    </div>
 	                                </div>
 	                            </div>
+								<div class="row">
+	                                <div class="col-md-12">
+	                                    <div class="mb-3">
+	                                        <label for="region">Region:</label>
+	                                        <select name="region" id="region" class="form-select select2" required="">
+	                                        	<option value="">-- Select Region --</option>
+	                                            @foreach($data['region'] as $region)
+		                                        {{-- @if(!in_array($table, $data['ignoreTables'])) --}}
+	                                            <option value="{{ $region->id }}" >{{ $region->region }}</option>
+	                                            {{-- @endif --}}
+	                                            @endforeach
+                                                {{-- <option value="payouts" {{ old('table')=='payout' ? 'selected' : '' }}>Payouts</option> --}}
+	                                        </select>
+	                                    </div>
+	                                </div>
+	                            </div>
 	                            <div class="row">
 	                                <div class="col-md-12">
 	                                    <div class="mb-3">

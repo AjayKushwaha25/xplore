@@ -321,6 +321,9 @@ class BackendController extends Controller
         ini_set("memory_limit", "-1");
         set_time_limit(0);
         $table = $request->validated('table');
+        $region = $request->validated('region');
+        // dd($region);
+
 
         $startDate = Carbon::parse($request->validated('start_date'))->format('Y-m-d 00:00:00');
         $endDate = Carbon::parse($request->validated('end_date'))->format('Y-m-d 23:59:59');
@@ -333,7 +336,7 @@ class BackendController extends Controller
 
         if(class_exists($exportClassName)===true){
             $classInstance = new $exportClassName;
-            $classInstance->dateRange($startDate,$endDate);
+            $classInstance->data($startDate,$endDate,$region);
             return Excel::download($classInstance, $fileName);
         }else{
             $table = ucwords(str_replace('_', ' ', Str::singular($table)));

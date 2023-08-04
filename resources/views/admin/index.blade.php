@@ -519,7 +519,7 @@ $(function() {
         if (url) { // require a URL
               window.location = url; // redirect
           }
-          return false;
+         
 
         getUserCount('today', '#retailer-count-today',wd_code);
     getUserCount('last7days', '#retailer-count-last7days',wd_code);

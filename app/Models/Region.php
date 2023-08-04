@@ -6,22 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use AjayKushwaha25\CustomMakeCommand\Traits\UsesUUID;
 
-class City extends Model
+class Region extends Model
 {
     use HasFactory, UsesUUID;
 
     protected $fillable = [
-        'name',
-        'abbr',
-        'status'
+        'region',
+        'status',
     ];
 
-    public function wds()
+    public function cities()
     {
-        return $this->hasMany(WD::class);
-    }
-
-    public function region() {
-        return $this->belongsTo(Region::class);
+        return $this->hasMany(City::class);
     }
 }

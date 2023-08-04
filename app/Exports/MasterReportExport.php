@@ -11,9 +11,10 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class MasterReportExport implements FromCollection, WithCustomStartCell, WithMapping, WithHeadings, WithEvents, WithStyles
 {
-    public function dateRange($startDate,$endDate){
+    public function data($startDate,$endDate,$region){
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->region = $region;
     }
 
     public function headings(): array

@@ -9,9 +9,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEvents, WithStyles
 {
-    public function dateRange($startDate,$endDate){
+    public function data($startDate,$endDate,$region){
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->region = $region;
+        // dd($this->region);
     }
 
     public function headings(): array
@@ -71,18 +73,24 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
     */
     public function collection()
     {
-         return LoginHistory::query()->
+        $region = $this->region;
+         return  LoginHistory::query()->
                             with([
                                 'retailer:id,name,mobile_number,upi_id,whatsapp_number',
                                 'qRCodeItem:id,serial_number,reward_item_id,wd_id',
                                 'qRCodeItem.rewardItem:id,value',
                                 'qRCodeItem.wd:id,code,city_id',
-                                'qRCodeItem.wd.city:id,name'
+                                'qRCodeItem.wd.city:id,name,region_id',
                             ])
+                            ->whereHas('qRCodeItem.wd.city',function ($query) use ($region){
+                                $query->where('region_id', $region);
+                            })
                             ->whereBetween('created_at',[$this->startDate, $this->endDate])
                             ->select('id','retailer_id','q_r_code_item_id','created_at')
                             ->orderBy('created_at','ASC')
                             ->get();
+
+                            // dd($loginHistory);
     }
 
 }
