@@ -18,42 +18,37 @@ use CustomHelper;
 class AdminController extends Controller
 {
     public function index(Request $request){
-
-        
-
-        
-        $wd_city_list = City::with(
+        $cityLists = City::with(
             'wds:id,code,city_id',
             )
             ->orderBy('name','asc')
             ->get(['id','name']);
-        
-    
         $wd_code = $request->get('wd_code');
-        // dd($wd_code);
-        if($wd_code == "all" || $wd_code == null){
-            $loginHistories = LoginHistory::with([
-                'retailer:id,name,mobile_number',
-                'qRCodeItem:id,serial_number,reward_item_id,wd_id',
-                'qRCodeItem.rewardItem:id,value'
-            ])
-            ->select('id','retailer_id','q_r_code_item_id','created_at')
-            ->latest()
-            ->get();
-        }
-        else{
+
         $loginHistories = LoginHistory::with([
                 'retailer:id,name,mobile_number',
                 'qRCodeItem:id,serial_number,reward_item_id,wd_id',
                 'qRCodeItem.rewardItem:id,value'
             ])
-            ->whereHas('qRCodeItem.wd',function ($query) use ($wd_code){
-                $query->where('code', $wd_code);
+            ->when($wd_code, function ($query) use ($wd_code) {
+                $query->whereHas('qRCodeItem.wd',function ($query) use ($wd_code){
+                        $query->where('code', $wd_code);
+                    });
             })
             ->select('id','retailer_id','q_r_code_item_id','created_at')
             ->latest()
             ->get();
+
+
+        // dd($loginHistories->count());
+        /*if($wd_code == "all" || $wd_code == null){
+            $loginHistories = $loginHistories->get();
         }
+        else{
+            $loginHistories =
+                ->get();
+        }*/
+
         $topScannedUsers = $loginHistories
             ->groupBy('retailer_id')
             ->map(function ($histories, $retailerId) {
@@ -71,20 +66,14 @@ class AdminController extends Controller
         $scannedHistories = $loginHistories->take(10);
 
         $data = [
-            // 'counts' => NavHelper::getCouponCounts(),
             'coupons' => RewardItem::orderBy('value')->get(['id','value']),
             'scannedHistories' => $scannedHistories,
             'topScannedUsers' => $topScannedUsers,
-            'wd_city_list' => $wd_city_list,
+            'cityLists' => $cityLists,
         ];
 
         return view('admin.index', compact('data'));
     }
-
-    // public function getLoginHistories(Request $request){
-    //     $wd_code = $request->get('wd_code');
-
-    // }
 
     public function getCouponCount(Request $request){
         $wd_code = $request->get('wd_code');
