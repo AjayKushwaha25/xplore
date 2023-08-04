@@ -28,13 +28,13 @@ float-left;
                     <div class="mb-3">
                     <form>
                         <select name="city" id="city" class="form-select select2 " required="">
-                            <option value="{{ route('admin.home',['wd_code'=>'all']) }}" {{ request()->get('wd_code')=='all' || request()->get('wd_code')==null ? 'selected' : '' }}>-- all --</option>
-                            @foreach($data['wd_city_list'] as $wd_city_list)
-                            @foreach($wd_city_list->wds as $wd)
-                                <option value="{{ route('admin.home',['wd_code'=>$wd->code]) }}"
-                                    {{ $wd->code==request()->get('wd_code') ? 'selected' : '' }}>
-                                    {{ $wd_city_list->name ? $wd_city_list->name : '' }} ({{ $wd->code}})
-                                </option>
+                            <option value="" {{ request()->get('wd_code')==null ? 'selected' : '' }}>-- all --</option>
+                            @foreach($data['cityLists'] as $cityList)
+                            @foreach($cityList->wds as $wd)
+                            <option value="{{ $wd->code }}"
+                                {{ $wd->code == request()->get('wd_code') ? 'selected' : '' }}>
+                                {{ $cityList->name ? $cityList->name : '' }} ({{ $wd->code}})
+                            </option>
                             @endforeach
                             @endforeach
                         </select>
@@ -69,8 +69,6 @@ float-left;
                                             class="img-thumbnail rounded-circle">
                                     </div>
                                     <h5 class="font-size-15 text-truncate">{{ Auth::user()->name }}</h5>
-                                    {{-- <p class="text-muted mb-0 text-truncate">{{ Auth::user()->roles->first()->name }}
-                                    </p> --}}
                                 </div>
                             </div>
                         </div>
@@ -414,14 +412,7 @@ float-left;
 $(function() {
 
     const queryString = window.location.search;
-    // console.log(queryString);
     let wd_code = queryString.slice(9, 15);
-    console.log(wd_code);
-
-    // var wdCode = document.getElementById('city').value;
-   
-
-  
 
     function getUserCount(range, container, wd_code) {
         $.ajax({
@@ -449,11 +440,6 @@ $(function() {
         getUserCount('last90days', '#retailer-count-last90days',wd_code);
     }, 10000);
 
-
-// payout count
-
-    // $('#city').change(function() {
-    
     
     function getPayoutCount(status, container, wd_code) {
         
@@ -514,12 +500,14 @@ $(function() {
 
 
     $('#city').change(function() {
-        var url = document.getElementById('city').value;
-       
-        if (url) { // require a URL
-              window.location = url; // redirect
-          }
-          return false;
+        var wdCode = $('#city').val();
+        if(wdCode == ''){
+            url = "{{ route('admin.home') }}";
+        }else{
+            url = "{{ route('admin.home', ['wd_code' => 'wdCode']) }}".replace('wdCode',wdCode);
+        }
+
+        window.location = url
 
         getUserCount('today', '#retailer-count-today',wd_code);
     getUserCount('last7days', '#retailer-count-last7days',wd_code);
