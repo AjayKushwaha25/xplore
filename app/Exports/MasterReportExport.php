@@ -115,7 +115,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
     */
     public function collection()
     {
-        $region = $this->region == 'all' ? NULL : $this->region;
+        $region = $this->region;
         $mergedData = \App\Models\WD::leftJoin('cities', 'wd.city_id', '=', 'cities.id')
         ->leftJoin('q_r_code_items', 'wd.id', '=', 'q_r_code_items.wd_id')
         ->leftJoin('login_histories', 'q_r_code_items.id', '=', 'login_histories.q_r_code_item_id')

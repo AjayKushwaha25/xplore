@@ -13,7 +13,6 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->region = $region;
-        // dd($this->region);
     }
 
     public function headings(): array
@@ -83,7 +82,9 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
                                 'qRCodeItem.wd.city:id,name,region_id',
                             ])
                             ->whereHas('qRCodeItem.wd.city',function ($query) use ($region){
-                                $query->where('region_id', $region);
+                                if($region!=NULL){
+                                    $query->where('region_id', $region);
+                                }
                             })
                             ->whereBetween('created_at',[$this->startDate, $this->endDate])
                             ->select('id','retailer_id','q_r_code_item_id','created_at')

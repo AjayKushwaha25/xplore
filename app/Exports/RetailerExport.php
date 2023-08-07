@@ -83,7 +83,9 @@ class RetailerExport implements FromCollection, WithMapping, WithHeadings, WithE
             'loginHistories.qRCodeItem.wd.city.region:id,region',
         ])
         ->whereHas('loginHistories.qRCodeItem.wd.city',function ($query) use ($region){
-            $query->where('region_id', $region);
+            if($region!=NULL){
+                $query->where('region_id', $region);
+            }
         })
         ->get(['id','name','mobile_number','whatsapp_number','upi_id','created_at']);
 
