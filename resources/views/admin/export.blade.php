@@ -92,11 +92,11 @@
 	                                        <label for="region">Region:</label>
 	                                        <select name="region" id="region" class="form-select select2">
 	                                        	<option value="">-- Select Region --</option>
-                                                <option value="all" >All</option>
 	                                            @foreach($data['region'] as $region)
 	                                            <option value="{{ $region->id }}" >{{ $region->name }}</option>
 	                                            @endforeach
 	                                        </select>
+                                            <small>Leave empty if all region required</small>
 	                                    </div>
 	                                </div>
 	                            </div>
