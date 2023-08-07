@@ -93,11 +93,8 @@
 	                                        <select name="region" id="region" class="form-select select2" required="">
 	                                        	<option value="">-- Select Region --</option>
 	                                            @foreach($data['region'] as $region)
-		                                        {{-- @if(!in_array($table, $data['ignoreTables'])) --}}
-	                                            <option value="{{ $region->id }}" >{{ $region->region }}</option>
-	                                            {{-- @endif --}}
+	                                            <option value="{{ $region->id }}" >{{ $region->name }}</option>
 	                                            @endforeach
-                                                {{-- <option value="payouts" {{ old('table')=='payout' ? 'selected' : '' }}>Payouts</option> --}}
 	                                        </select>
 	                                    </div>
 	                                </div>

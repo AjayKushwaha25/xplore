@@ -115,6 +115,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
     */
     public function collection()
     {
+        $region = $this->region;
         $mergedData = \App\Models\WD::leftJoin('cities', 'wd.city_id', '=', 'cities.id')
         ->leftJoin('q_r_code_items', 'wd.id', '=', 'q_r_code_items.wd_id')
         ->leftJoin('login_histories', 'q_r_code_items.id', '=', 'login_histories.q_r_code_item_id')
@@ -128,6 +129,9 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
             )
         ->groupBy('wd.id', 'wd.code', 'cities.name')
         ->with('qRCodeItems:id,wd_id')
+        ->whereHas('qRCodeItems.wd.city',function ($query) use ($region){
+            $query->where('region_id', $region);
+        })
         ->oldest('wd.created_at')
         ->get()
         ->map(function ($item) {
@@ -158,6 +162,9 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
             'qRCodeItem.wd:id,code'
         ])
         ->select('id', 'retailer_id', 'q_r_code_item_id', 'created_at')
+        ->whereHas('qRCodeItem.wd.city',function ($query) use ($region){
+            $query->where('region_id', $region);
+        })
         ->get()
         ->groupBy('qRCodeItem.wd.code') // Grouping by wd code
         ->map(function ($histories, $wdCode) {
@@ -166,6 +173,7 @@ class MasterReportExport implements FromCollection, WithCustomStartCell, WithMap
             });
             return $retailerData;
         });
+        // dd($loginHistories);
 
 
         $retailersWithQtyWiseCount = $loginHistories->map(function ($wdData) {
