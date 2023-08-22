@@ -85,9 +85,12 @@ class LoginHistoryExport implements FromCollection, WithMapping, WithHeadings, W
                                 'qRCodeItem.wd:id,code,city_id',
                                 'qRCodeItem.wd.city:id,name'
                             ])
-                            ->whereHas('qRCodeItem.wd.city',function ($query) use ($region){
+                            ->when($region, function($query) use ($region){
+                                $query->whereHas('qRCodeItem.wd.city',function ($query) use ($region){
                                 $query->where('region_id', $region);
-                            })
+                            });
+
+                        })
                             ->select('id','ip_address','retailer_id','q_r_code_item_id','created_at')
                             ->get();
     }

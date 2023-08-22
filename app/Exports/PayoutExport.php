@@ -82,13 +82,15 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
                                 'qRCodeItem.wd:id,code,city_id',
                                 'qRCodeItem.wd.city:id,name,region_id',
                             ])
-                            ->whereHas('qRCodeItem.wd.city',function ($query) use ($region){
-                                $query->where('region_id', $region);
+                            ->when($region, function($query) use ($region){
+                                    $query->whereHas('qRCodeItem.wd.city',function ($query) use ($region){
+                                    $query->where('region_id', $region);
+                                });
                             })
-                            ->whereBetween('created_at',[$this->startDate, $this->endDate])
-                            ->select('id','retailer_id','q_r_code_item_id','created_at')
-                            ->orderBy('created_at','ASC')
-                            ->get();
+                                ->whereBetween('created_at',[$this->startDate, $this->endDate])
+                                ->select('id','retailer_id','q_r_code_item_id','created_at')
+                                ->orderBy('created_at','ASC')
+                                ->get();
 
                             // dd($loginHistory);
     }

@@ -90,7 +90,7 @@
 	                                <div class="col-md-12">
 	                                    <div class="mb-3">
 	                                        <label for="region">Region:</label>
-	                                        <select name="region" id="region" class="form-select select2" required="">
+	                                        <select name="region" id="region" class="form-select select2">
 	                                        	<option value="">-- Select Region --</option>
 	                                            @foreach($data['region'] as $region)
 		                                        {{-- @if(!in_array($table, $data['ignoreTables'])) --}}
