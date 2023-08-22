@@ -500,14 +500,6 @@ $(function() {
 
 
     $('#city').change(function() {
-<<<<<<< HEAD
-        var url = document.getElementById('city').value;
-       
-        if (url) { // require a URL
-              window.location = url; // redirect
-          }
-         
-=======
         var wdCode = $('#city').val();
         if(wdCode == ''){
             url = "{{ route('admin.home') }}";
@@ -516,7 +508,6 @@ $(function() {
         }
 
         window.location = url
->>>>>>> 6723b9513df6bc0679fb49083efbb5fe406d72a3
 
         getUserCount('today', '#retailer-count-today',wd_code);
     getUserCount('last7days', '#retailer-count-last7days',wd_code);

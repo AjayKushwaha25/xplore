@@ -13,7 +13,6 @@ class PayoutExport implements FromCollection, WithMapping, WithHeadings, WithEve
         $this->startDate = $startDate;
         $this->endDate = $endDate;
         $this->region = $region;
-        // dd($this->region);
     }
 
     public function headings(): array

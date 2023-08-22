@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Region;
+use App\Models\{Region, City};
 
 class RegionSeeder extends Seeder
 {
@@ -15,30 +15,76 @@ class RegionSeeder extends Seeder
      */
     public function run()
     {
-        $data = [
+        $datas = [
             [
-                'id' => 'fc3cba88-0ced-4ea2-a060-b4df76b01035',
-                'region' => 'south',
+                'name' => 'South',
                 'status' => 1,
-                'created_at' => now()->toDateTimeString(),
-                'updated_at' => now()->toDateTimeString(),
             ],
             [
-                'id' => '935d6be2-c448-4c90-aa19-4fbc7188fc99',
-                'region' => 'north',
+                'name' => 'North',
                 'status' => 1,
-                'created_at' => now()->toDateTimeString(),
-                'updated_at' => now()->toDateTimeString(),
             ],
             [
-                'id' => 'ce2cfc19-0345-47f4-9f39-8f4fb677d266',
-                'region' => 'west',
+                'name' => 'West',
                 'status' => 1,
-                'created_at' => now()->toDateTimeString(),
-                'updated_at' => now()->toDateTimeString(),
             ],
         ];
 
-        Region::insert($data);
+        $south = [
+            'Manglore',
+            'Udipi',
+            'Hubli',
+            'Belgaum',
+        ];
+
+        $north = [
+            'Chandigarh',
+            'Gwalior',
+            'Indore',
+        ];
+
+        $west = [
+            'Nagpur',
+            'Pune',
+            'Nanded Waghal',
+            'Ahmadabad',
+            'Aurangabad',
+            'Amravati',
+            'Amarawati',
+            'Kolhapur',
+            'Rajkot',
+            'Bhavnagar',
+            'Baroda',
+            'Surat'
+        ];
+
+        foreach($datas as $data){
+            $region = Region::create($data);
+            if($region->name == "West"){
+                foreach($west as $name){
+                    $city = City::whereName($name)->first();
+                    // dd($city, $name, $region->name);
+                    if($city != null){
+                        $city->update(['region_id' => $region->id]);
+                    }
+                }
+            }
+            if($region->name == "South"){
+                foreach($south as $name){
+                    $city = City::whereName($name)->first();
+                    if($city != null){
+                        $city->update(['region_id' => $region->id]);
+                    }
+                }
+            }
+            if($region->name == "North"){
+                foreach($north as $name){
+                    $city = City::whereName($name)->first();
+                    if($city != null){
+                        $city->update(['region_id' => $region->id]);
+                    }
+                }
+            }
+        }
     }
 }
