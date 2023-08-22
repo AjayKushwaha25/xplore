@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{PagesController, LoginController,RegisterController, CouponCodeController,LpRetailerController};
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
-use App\Http\Controllers\Admin\{UserController, BackendController, AdminController, QRCodeItemController, RetailerController, LoginHistoryController, PayoutController};
+use App\Http\Controllers\Admin\{UserController, BackendController, AdminController, QRCodeItemController, RetailerController, LoginHistoryController, PayoutController,RazorpayController};
 
 /*
 |--------------------------------------------------------------------------
@@ -156,6 +156,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('lp_retailer_lists', [LpRetailerController::class, 'lpRetailersList'])->name('lpretailer_lists');
         Route::get('lpretailer_histories', [LpRetailerController::class, 'viewLoginHistory'])->name('lpretailer_histories_index');
         Route::get('lpretailer_history_lists', [LpRetailerController::class, 'lpRetailerHistoryLists'])->name('lpretailer_history_list');
+    
+        // Razorpay
+        Route::get('razorpay/index', [RazorpayController::class, 'index'])->name('razorpay.index');
+        Route::post('razorpay/exportData', [RazorpayController::class, 'exportData'])->name('razorpay.exportData');
     });
     
 });

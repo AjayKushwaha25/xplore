@@ -74,6 +74,16 @@
                     </ul>
                 </li>
                 @endif
+                <li>
+                    <a href="{{ route('admin.razorpay.index') }}" class="waves-effect">
+                        <i class="bx bx-home-circle"></i>
+                        <span key="t-user">Razorpay</span>
+                    </a>
+                    {{-- <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('admin.retailers.index') }}" key="t-view-user">View Retailer</a></li>
+                        <li><a href="{{ route('admin.login-histories') }}" key="t-view-user">Login History</a></li>
+                    </ul> --}}
+                </li>
             </ul>
         </div>
         <!-- Sidebar -->
