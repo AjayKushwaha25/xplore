@@ -93,7 +93,7 @@
 	                                        <select name="region" id="region" class="form-select select2">
 	                                        	<option value="">-- Select Region --</option>
 	                                            @foreach($data['region'] as $region)
-	                                            <option value="{{ $region->id }}" >{{ $region->name }}</option>
+	                                            	<option value="{{ $region->id }}" >{{ $region->name }}</option>
 	                                            @endforeach
 	                                        </select>
                                             <small>Leave empty if all region required</small>

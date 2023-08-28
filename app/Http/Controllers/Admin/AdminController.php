@@ -110,6 +110,8 @@ class AdminController extends Controller
             'region' => $region,
         ];
 
+        // dd($data);
+
         return view('admin/export')->with('data',$data);
     }
 }
