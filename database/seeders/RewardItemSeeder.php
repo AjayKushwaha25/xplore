@@ -17,7 +17,7 @@ class RewardItemSeeder extends Seeder
     {
         $datas = [
             [
-                'id' => 'fc3cba88-0ced-4ea2-a060-b4df76b01060',
+                'id' => 'ab3cba88-0ced-4ea2-a060-b4df76b01061',
                 'value' => 50,
                 'created_at' => now()->toDateTimeString(),
                 'updated_at' => now()->toDateTimeString(),
